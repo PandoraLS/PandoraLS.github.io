@@ -1,0 +1,632 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ML,SVM,机器学习技法," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="此文是学习林轩田老师的机器学习技法第一课——Linear Support Vector Machine——的课堂笔记，有关 SVM 公式推导。 参考 机器学习技法 超平面 课件  （单层）感知器感知器 (Perceptron) 利用超平面$$\mathbf{w} \cdot \mathbf{x} = b $$进行二元分类。其中，$\mathbf{x} = (x_1, x_2, …, x_n)$，$">
+<meta name="keywords" content="ML,SVM,机器学习技法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习技法第一课——Linear Support Vector Machine">
+<meta property="og:url" content="http://yoursite.com/2016/05/25/ML-MLT-0-deductionSVM/index.html">
+<meta property="og:site_name" content="HotSummer">
+<meta property="og:description" content="此文是学习林轩田老师的机器学习技法第一课——Linear Support Vector Machine——的课堂笔记，有关 SVM 公式推导。 参考 机器学习技法 超平面 课件  （单层）感知器感知器 (Perceptron) 利用超平面$$\mathbf{w} \cdot \mathbf{x} = b $$进行二元分类。其中，$\mathbf{x} = (x_1, x_2, …, x_n)$，$">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2016-10-01T14:47:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习技法第一课——Linear Support Vector Machine">
+<meta name="twitter:description" content="此文是学习林轩田老师的机器学习技法第一课——Linear Support Vector Machine——的课堂笔记，有关 SVM 公式推导。 参考 机器学习技法 超平面 课件  （单层）感知器感知器 (Perceptron) 利用超平面$$\mathbf{w} \cdot \mathbf{x} = b $$进行二元分类。其中，$\mathbf{x} = (x_1, x_2, …, x_n)$，$">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+
+  <title> 机器学习技法第一课——Linear Support Vector Machine | HotSummer </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HotSummer</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                机器学习技法第一课——Linear Support Vector Machine
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-25T13:01:10+08:00" content="2016-05-25">
+              2016-05-25
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>此文是学习林轩田老师的机器学习技法第一课——Linear Support Vector Machine——的课堂笔记，有关 SVM 公式推导。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://www.csie.ntu.edu.tw/~htlin/mooc/" target="_blank" rel="noopener">机器学习技法</a></li>
+<li><a href="/2016/05/23/Math-LinAlg-hyperplane/" title="超平面">超平面</a></li>
+<li><a href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/201_handout.pdf" target="_blank" rel="noopener">课件</a></li>
+</ul>
+<h3 id="（单层）感知器"><a href="#（单层）感知器" class="headerlink" title="（单层）感知器"></a>（单层）感知器</h3><p>感知器 (Perceptron) 利用超平面<br>$$\mathbf{w} \cdot \mathbf{x} = b $$<br>进行二元分类。其中，$\mathbf{x} = (x_1, x_2, …, x_n)$，$\mathbf{w} = (w_1, w_2, …, w_n)$。</p>
+<p>一个数据 $(\mathbf{x},y)$ 中，$\mathbf{x}$ 作为输入，一个特征向量，可代表一个实体，而输出 $y \in {-1, 1}$ 则标记该实体的类别。Perceptron 希望找到一个超平面，即确定参数 $\mathbf{w}, b$， 能对一组数据 ${(\mathbf{x_1}, y_1), (\mathbf{x_2}, y_2),…,(\mathbf{x_n}, y_n),}$ 进行分类，使得对每组 $(\mathbf{x}, y)$ 都有：当 $y &gt; 0$ 时，$\mathbf{w} \cdot \mathbf{x} &gt; b$, 否则，$\mathbf{w} \cdot \mathbf{x} &lt; b$。</p>
+<p>例子，考虑输入为二维向量，每个数据表现为一个点，而超平面视作一条直线，Perceptron 所做的是，对多个数据点，找到一条直线将有不同标记（-1或1）的点分开。</p>
+<h3 id="公式推导"><a href="#公式推导" class="headerlink" title="公式推导"></a>公式推导</h3><p>SVM 在 Perceptron 上更进一步，不仅要求能够找到一个超平面，而且要求这个超平面能能够尽量容忍误差。就 <em>Perceptron</em> 一节所举例子，SVM 要求该直线尽可能远离数据点，使得如果数据点因为误差而偏移，该直线也可能正确分类。</p>
+<p>这可以理解成要求向量到超平面的距离尽可能大。在 <a href="/2016/05/23/Math-LinAlg-hyperplane/" title="超平面">超平面</a> 的 <em>点与超平面距离与 SVM</em> 一节中已经说明距离可以表示为<br>$$<br>d = \left| \frac{\mathbf{w \cdot x}}{\mathbf{|w|}} - \frac{b}{\mathbf{|w|}} \right| = \frac {1} {|\mathbf{w}|} |\mathbf{w \cdot x} - b|<br>$$<br>这时，目标可以转换成求使“最小的 d” “最大” 的 $\mathbf{w}, b$，“最小的d”指所有向量与某组 $\mathbf{w}, b$ 所确定的超平面的距离的最小值，“最大” 则指所有 $\mathbf{w}, b$ 组各自对应的 “最小的 d ” 中最大的。翻译成符号：<br>$$<br>\max_{b, \mathbf{w}} margin(b, \mathbf{w})  \\<br>subject\ to \ every\ y_n(\mathbf{w^T x<em>n} - b) &gt; 0  \\<br>margin(b, \mathbf{w}) = \min</em>{n=1,..,N} \frac {1}{|\mathbf{w}|} |\mathbf{w^T x_n} - b|<br>$$<br>其中，margin 可理解成距离，subject to 表示限制。即要求在可分类的情况下，求解出每组 $(b, \mathbf{w})$ 最小的距离，再选取其中最大的。注：$\min$ 内部，$n$ 作为变量，而 $\max$ 内部， $\mathbf{w}, b$ 作为变量。</p>
+<p>课程中将其转换为二次规划（Quadratic programming）问题求解。</p>
+<p><strong><em>去绝对值</em></strong>，$|\mathbf{w^T x_n} - b|$ 转换成 $y_n(\mathbf{w^T x_n} - b)$。</p>
+<p><strong><em>令 $y_n(\mathbf{w^T x_n} - b)=1$</em></strong>（可以等于任一大于0常数），考虑到<br>$\mathbf{w}, b$ 作为求解变量可以乘以一个常数 k 进行放缩同时保持超平面不变，而 $|\mathbf{w}|$ 会抵消 k 带来的影响并保持 margin 不变，所以这步变换与原式等价。这使得<br>$$margin = \min_{n=1,..,N} \frac {1}{|\mathbf{w}|} $$<br>而且，这可以去除限制 $y_n(\mathbf{w^T x<em>n} - b) &gt; 0$，变换为：<br>$$<br>\max</em>{b, \mathbf{w}} \frac {1}{|\mathbf{w}|} \\<br>subject\ to \ [\min_{n=1,..,N} y_n(\mathbf{w^T x_n} - b)]=1<br>$$</p>
+<p><strong><em>令 $y_n(\mathbf{w^T x_n} - b) \ge 1$</em></strong>，要求对于所有的 $n$ 都成立（上步仅要求最小值处成立）。这是合乎情理的，因为对于被放缩的某组 $\mathbf{w}, b$，距离最小值为1，则该组所有值都应不小于1。好处是限制条件不必做最小化操作。课程中也给出证明，说明此步与原式等价，在此不赘述。</p>
+<p><strong><em>求最大值变为求最小值，去掉倒数与绝对值</em></strong>。最终变换成一个所谓简单的二次规划问题为<br>$$<br>\min_{b, \mathbf{w}} \mathbf{w^T w} \\<br>subject\ to \ y_n(\mathbf{w^T x_n} - b) \ge 1<br>$$</p>
+<h3 id="支持向量"><a href="#支持向量" class="headerlink" title="支持向量"></a>支持向量</h3><p>所谓支持向量，即距离最佳超平面最近的向量。它们“支持”了最佳超平面，而丢失其他向量对最佳超平面没有影响。对最佳 $(\mathbf{w}, b)$ 支持向量满足：<br>$$y(\mathbf{w^T x} - b) = 1$$</p>
+<h3 id="更强容错能力"><a href="#更强容错能力" class="headerlink" title="更强容错能力"></a>更强容错能力</h3><p>直觉上认为 SVM 有更强的容错能力。课程中比较了一般正则仳与 SVM：<br>|       | minimize |  constraint|<br>|:—–:|:—–:|:——-:|<br>regularization |  $E<em>{in}$ | $\mathbf{w^T w} \le C$<br>SVM            |  $\mathbf{w^T w}$  |   $E</em>{in} = 0$ [and more]<br>可看出 SVM 实际上做了与正则化相似的工作，而正则化能提高模型的容错能力。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ML/" rel="tag">#ML</a>
+          
+            <a href="/tags/SVM/" rel="tag">#SVM</a>
+          
+            <a href="/tags/机器学习技法/" rel="tag">#机器学习技法</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/25/Math-Game-5initRules/" rel="next" title="耶鲁博弈论-5个入门结论-笔记">
+                <i class="fa fa-chevron-left"></i> 耶鲁博弈论-5个入门结论-笔记
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/31/ML-MLT-1-dualSVM/" rel="prev" title="机器学习技法第二课——Dual Support Vector Machine">
+                机器学习技法第二课——Dual Support Vector Machine <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Blunt" />
+          <p class="site-author-name" itemprop="name">Blunt</p>
+          <p class="site-description motion-element" itemprop="description">email：summer15y@163.com</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">72</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#（单层）感知器"><span class="nav-number">2.</span> <span class="nav-text">（单层）感知器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#公式推导"><span class="nav-number">3.</span> <span class="nav-text">公式推导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#支持向量"><span class="nav-number">4.</span> <span class="nav-text">支持向量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更强容错能力"><span class="nav-number">5.</span> <span class="nav-text">更强容错能力</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Blunt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

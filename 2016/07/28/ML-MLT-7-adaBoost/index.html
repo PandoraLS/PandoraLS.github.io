@@ -1,0 +1,659 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ML,机器学习技法,Ensemble Learning," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="此文是本人学习林轩田老师教授的机器学习技法第八课——Adaptive Boosting——的笔记。 不同于 Blending and Bagging，Boosting 提供一种增强式集成学习方法，它在顺序训练各模型时，要求后面的模型着重训练前面的模型失误的数据，使得总的模型误差不断减小。Adaptive Boosting，简称 AdaBoost， 是 Boosting 中的一种。 参考 机器学习技">
+<meta name="keywords" content="ML,机器学习技法,Ensemble Learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习技法第八课——Adaptive Boosting">
+<meta property="og:url" content="http://yoursite.com/2016/07/28/ML-MLT-7-adaBoost/index.html">
+<meta property="og:site_name" content="HotSummer">
+<meta property="og:description" content="此文是本人学习林轩田老师教授的机器学习技法第八课——Adaptive Boosting——的笔记。 不同于 Blending and Bagging，Boosting 提供一种增强式集成学习方法，它在顺序训练各模型时，要求后面的模型着重训练前面的模型失误的数据，使得总的模型误差不断减小。Adaptive Boosting，简称 AdaBoost， 是 Boosting 中的一种。 参考 机器学习技">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2016-10-01T14:47:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习技法第八课——Adaptive Boosting">
+<meta name="twitter:description" content="此文是本人学习林轩田老师教授的机器学习技法第八课——Adaptive Boosting——的笔记。 不同于 Blending and Bagging，Boosting 提供一种增强式集成学习方法，它在顺序训练各模型时，要求后面的模型着重训练前面的模型失误的数据，使得总的模型误差不断减小。Adaptive Boosting，简称 AdaBoost， 是 Boosting 中的一种。 参考 机器学习技">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+
+  <title> 机器学习技法第八课——Adaptive Boosting | HotSummer </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HotSummer</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                机器学习技法第八课——Adaptive Boosting
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-28T22:41:16+08:00" content="2016-07-28">
+              2016-07-28
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>此文是本人学习<a href="http://www.csie.ntu.edu.tw/~htlin/" target="_blank" rel="noopener">林轩田老师</a>教授的机器学习技法第八课——Adaptive Boosting——的笔记。</p>
+<p>不同于 <a href="/2016/07/23/ML-MLT-6-blendingBagging/" title="Blending and Bagging">Blending and Bagging</a>，Boosting 提供一种增强式集成学习方法，它在顺序训练各模型时，要求后面的模型着重训练前面的模型失误的数据，使得总的模型误差不断减小。Adaptive Boosting，简称 AdaBoost， 是 Boosting 中的一种。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://www.csie.ntu.edu.tw/~htlin/mooc/" target="_blank" rel="noopener">机器学习技法</a></li>
+<li><a href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/208_handout.pdf" target="_blank" rel="noopener">课件</a></li>
+<li><a href="https://en.wikipedia.org/wiki/AdaBoost" target="_blank" rel="noopener">AdaBoost wikipedia</a></li>
+</ul>
+<h3 id="AdaBoost-的形象类比与流程概要"><a href="#AdaBoost-的形象类比与流程概要" class="headerlink" title="AdaBoost 的形象类比与流程概要"></a>AdaBoost 的形象类比与流程概要</h3><p>课上举的例子实在太形象了，一定得记下啊。Boosting 好比老师教一群小学生（多个模型）学习如何辨识苹果（集成学习）。这里有一堆图片（数据），其中有的是苹果的，还有不是苹果的。老师让学生 A 讲一条辨识苹果的规则（训练一个模型），然后特别指出他/她出错的图片（强调标识失败数据），让下一个同学提出新的规则（训练下一个模型），如此往复，最终可以得到一系列规则，虽然每条规则的辨识能力可能都很弱，但组合起来可能就是很强了（一系列弱模型集成为强模型）。</p>
+<p>那么，AdaBoost 的流程就比较清楚了。模型 $g$ 辨识失败的数据， $g(\mathbf{x_n}) \ne y_n$ ，称为问题数据, 辨识正确的数据，称简单数据。以下是大致流程：</p>
+<ol>
+<li>依次训练各模型</li>
+<li>在一个模型训练完成后，向下一个模型强调问题数据</li>
+<li>为每个模型分配权重，集成各模型</li>
+</ol>
+<h3 id="“强调”问题数据"><a href="#“强调”问题数据" class="headerlink" title="“强调”问题数据"></a>“强调”问题数据</h3><p>明显流程第二点是关键。如何才能做到对模型”强调”问题数据呢？这里的“强调”，可以翻译为增加模型在问题数据上犯错的代价。在<a href="https://www.csie.ntu.edu.tw/~htlin/mooc/" target="_blank" rel="noopener">机器学习基石</a>，老师提到过一些方法。比如，在训练前，复制问题数据 $n$ 份，如果模型在其中一个数据上犯错，就相当于犯了 $n$ 次错，达到“强调”的目的。这里使用的方法是，如果抽取到问题数据做训练，就对 error function 乘上一个系数 $u$ （大于一）。这样，如果模型在问题数据上犯错，error 会扩大 $u-1$ 倍。以下把这种处理方法称为“为数据分配权重”。</p>
+<p>实际上，AdaBoost 不仅为问题数据分配权重，也为简单数据分配权重。不过没差，只要能达到“强调”问题数据的效果就行。这里引入 $m$:</p>
+<p>$$m = \sqrt{\frac{1-e}{e}}$$</p>
+<p>其中 $e$ 表示模型的失误率。AdaBoost 对问题数据乘以 $m$ ，对简单数据除以 $m$ 。其中有两点值得注意。</p>
+<p>第一，如果 $e \lt 0.5$， 则 $m \gt 1$，问题数据确实会被“强调”；而当 $e \gt 0.5$ 时， $m \lt 1$ ，问题数据似乎不被“强调”，反而简单数据被“强调”了。其实不差，当 $e \gt 0.5$ 时，意味着模型辨识能力比瞎猜（ $e=0.5$ ）都不如，在最后模型结合时给它分配负权重，把它的辨识结果反过来，这时就应该向后面的模型“强调”简单数据。</p>
+<p>第二，注意 $m(e)\;with\;e \gt 0$ 是一个单调下降的函数。这意味着， $e$ 越小，辨识越准确，模型出错也越少， $m$ 也会越大，AdaBoost “强调问题数据”越是“厉害”。为什么在模型出错更少时“更强调”问题数据呢？这是为了平衡简单数据与问题数据的影响，进而训练出更不同（diverse）的模型（对集成学习来说，模型 diversity 越高，效果越好）。（?-?对这话的因果关系存疑）实际上， $m$ 是推导的结果（参见 <a href="https://en.wikipedia.org/wiki/AdaBoost" target="_blank" rel="noopener">AdaBoost</a>），在推导过程中似乎并未对此解释或假设，但以上论点也是比较合理的假说。</p>
+<h3 id="模型权重公式"><a href="#模型权重公式" class="headerlink" title="模型权重公式"></a>模型权重公式</h3><p>$$ \alpha = \ln m = \ln \sqrt{\frac{1-e}{e}}$$</p>
+<p>当 $e \gt 0.5$ 时， $\alpha \lt 0$。 所以在预测能力小于0.5时，模型被分配负权重，反之，权重为正。</p>
+<h3 id="AdaBoost-流程"><a href="#AdaBoost-流程" class="headerlink" title="AdaBoost 流程"></a>AdaBoost 流程</h3><ul>
+<li>$\mathbf{u}=[\frac{1}{N},\frac{1}{N},\frac{1}{N},…]$，长度为 $N$ ，记录每个数据的权重</li>
+<li><p>for t=1,2,…,T</p>
+<ul>
+<li>根据训练数据与 $\mathbf{u}$ 训练出模型 $g_t$</li>
+<li>计算</li>
+</ul>
+<p>$$m = \sqrt{\frac{1-e}{e}}\quad with\; e=\frac{\sum u_n[y_n \ne g_t(\mathbf{x_n})]}{\sum u_n}$$</p>
+<ul>
+<li><p>更新 $\mathbf{u}$</p>
+<p>$$u_n = \left{ \begin{array}{l}<br>u_n \cdot m,\quad y_n \ne g_t(\mathbf{x_n})\<br>u_n / m,\quad y_n = g_t(\mathbf{x_n})<br>\end{array} \right.$$</p>
+</li>
+<li><p>计算 $\alpha_t = \ln (m)$</p>
+</li>
+</ul>
+</li>
+<li>返回模型 $G(\mathbf{x})=sign (\sum \alpha_t g_t(\mathbf{x}))$</li>
+</ul>
+<h3 id="AdaBoost-的理论保证"><a href="#AdaBoost-的理论保证" class="headerlink" title="AdaBoost 的理论保证"></a>AdaBoost 的理论保证</h3><p>VC Bound：</p>
+<p>$$E<em>{out}(G)\le E</em>{in}(G) + O\left( \sqrt{O(d_{vc}(H) \cdot T\log T) \cdot \frac {\log N}{N}}  \right)$$</p>
+<p>$T$ 表示迭代的次数，实践证明，当迭代达到 $T=\log N$ 时， $E<em>{in}$ 会比较小，而此时的 VC Bound 也不太大，所以 $E</em>{out}$ 可以做得比较小。</p>
+<h3 id="基础模型选择——决策树桩"><a href="#基础模型选择——决策树桩" class="headerlink" title="基础模型选择——决策树桩"></a>基础模型选择——决策树桩</h3><p>流行选择 <a href="/2016/08/03/ML-MLT-8-decisionTree/" title="决策树桩（decision stump）">决策树桩（decision stump）</a> 作为基础模型（base algorithm）。决策树桩是深度为一的决策树，典型的弱分类器，常被用作集成学习中的基础模型。它的分类器为：</p>
+<p>$$h_{s,i,\theta}(\mathbf{x}) = s \cdot sign(x_i - \theta)$$</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ML/" rel="tag">#ML</a>
+          
+            <a href="/tags/机器学习技法/" rel="tag">#机器学习技法</a>
+          
+            <a href="/tags/Ensemble-Learning/" rel="tag">#Ensemble Learning</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/23/ML-MLT-6-blendingBagging/" rel="next" title="机器学习技法第七课——Blending and Bagging">
+                <i class="fa fa-chevron-left"></i> 机器学习技法第七课——Blending and Bagging
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/30/Math-Calculus-limit/" rel="prev" title="微积分——极限">
+                微积分——极限 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Blunt" />
+          <p class="site-author-name" itemprop="name">Blunt</p>
+          <p class="site-description motion-element" itemprop="description">email：summer15y@163.com</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">72</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AdaBoost-的形象类比与流程概要"><span class="nav-number">2.</span> <span class="nav-text">AdaBoost 的形象类比与流程概要</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#“强调”问题数据"><span class="nav-number">3.</span> <span class="nav-text">“强调”问题数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型权重公式"><span class="nav-number">4.</span> <span class="nav-text">模型权重公式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AdaBoost-流程"><span class="nav-number">5.</span> <span class="nav-text">AdaBoost 流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AdaBoost-的理论保证"><span class="nav-number">6.</span> <span class="nav-text">AdaBoost 的理论保证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基础模型选择——决策树桩"><span class="nav-number">7.</span> <span class="nav-text">基础模型选择——决策树桩</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Blunt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

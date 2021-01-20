@@ -1,0 +1,657 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Math,Calculus," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="微积分笔记 极值点、拐点与泰勒公式$$  f(x) = f(x_0) + f’(x_0)(x-x_0) + \frac{f’’(x_0)}{2!}(x-x_0)^2 + … + \frac{f^{(n)}(x_0)}{n!}(x-x_0)^n + R_n(x)$$ 对存在 n 阶导数的函数，  极值点要求一阶导数为 0，并且函数在邻域内先增后减或先减后增，称为“折回”的趋势； 拐点要求二阶导数为">
+<meta name="keywords" content="Math,Calculus">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微积分——导数应用">
+<meta property="og:url" content="http://yoursite.com/2016/07/30/Math-Calculus-derivationApplication/index.html">
+<meta property="og:site_name" content="HotSummer">
+<meta property="og:description" content="微积分笔记 极值点、拐点与泰勒公式$$  f(x) = f(x_0) + f’(x_0)(x-x_0) + \frac{f’’(x_0)}{2!}(x-x_0)^2 + … + \frac{f^{(n)}(x_0)}{n!}(x-x_0)^n + R_n(x)$$ 对存在 n 阶导数的函数，  极值点要求一阶导数为 0，并且函数在邻域内先增后减或先减后增，称为“折回”的趋势； 拐点要求二阶导数为">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2016-10-14T10:10:35.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="微积分——导数应用">
+<meta name="twitter:description" content="微积分笔记 极值点、拐点与泰勒公式$$  f(x) = f(x_0) + f’(x_0)(x-x_0) + \frac{f’’(x_0)}{2!}(x-x_0)^2 + … + \frac{f^{(n)}(x_0)}{n!}(x-x_0)^n + R_n(x)$$ 对存在 n 阶导数的函数，  极值点要求一阶导数为 0，并且函数在邻域内先增后减或先减后增，称为“折回”的趋势； 拐点要求二阶导数为">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+
+  <title> 微积分——导数应用 | HotSummer </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HotSummer</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                微积分——导数应用
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-07-30T18:32:10+08:00" content="2016-07-30">
+              2016-07-30
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Math/" itemprop="url" rel="index">
+                    <span itemprop="name">Math</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <a href="/2016/06/30/Math-Calculus-cheatSheet/" title="微积分笔记">微积分笔记</a>
+<h3 id="极值点、拐点与泰勒公式"><a href="#极值点、拐点与泰勒公式" class="headerlink" title="极值点、拐点与泰勒公式"></a>极值点、拐点与泰勒公式</h3><p>$$  f(x) = f(x_0) + f’(x_0)(x-x_0) + \frac{f’’(x_0)}{2!}(x-x_0)^2 + … + \frac{f^{(n)}(x_0)}{n!}(x-x_0)^n + R_n(x)<br>$$</p>
+<p>对存在 n 阶导数的函数，</p>
+<ul>
+<li>极值点要求一阶导数为 0，并且函数在邻域内先增后减或先减后增，称为“折回”的趋势；</li>
+<li>拐点要求二阶导数为 0，并且要求二阶导数在邻域内左右异号，即单调的趋势。</li>
+</ul>
+<p>从泰勒公式可见，在 $x_0$ 的 <strong>附近</strong> ，</p>
+<ul>
+<li>在 $x_0$ 的非 0 的偶数次导数使函数有“折回”的趋势（不受 $(x-x_0)$ 符号影响），</li>
+<li>在 $x_0$ 的非 0 的奇数次导数使函数有单调趋势。</li>
+<li>低阶导数比高阶导数更有“影响力”。</li>
+</ul>
+<p>所以，有以下结论：</p>
+<ul>
+<li>对极值点，要求一阶导数为 0，还要求第一个非 0 的更高阶导数的阶数为偶数；若为正，增加了附近的函数值，所以该点值更小，故为极小值，反之，极大值</li>
+<li>对拐点，要求二阶导数为 0，还要求第一个非 0 的更高阶导数的阶数为奇数</li>
+</ul>
+<h3 id="凹凸性与泰勒公式"><a href="#凹凸性与泰勒公式" class="headerlink" title="凹凸性与泰勒公式"></a>凹凸性与泰勒公式</h3><p>对存在 n 阶导数的函数，</p>
+<ul>
+<li>上凸函数要求附近的值比切线值小一点，即曲线在切线的下方</li>
+<li>下凸函数要求附近的值比切线值大一点，即曲线在切线的上方</li>
+</ul>
+<p>对偶数阶导数，因为折回的趋势，对凹凸性有着影响；而对奇数阶导数，对函数左边加右边减或右边减左边加，且程度相同，对凹凸性没影响。</p>
+<p>类似极值点，第一个非 0 的偶数阶导数，若为正，增加了附近的函数值，为下凸，反之为上凸。</p>
+<h3 id="微分中值定理"><a href="#微分中值定理" class="headerlink" title="微分中值定理"></a>微分中值定理</h3><ul>
+<li>类柯西定理证明，存在一值使得等式成立： <strong>构造辅助函数（原函数）</strong><ul>
+<li>必要时用积分，有时需要变换方程方便积分</li>
+<li>必要时解微分方程</li>
+</ul>
+</li>
+<li>定理运用经典条件：开区间可导，定区间连续，（罗尔中值定理）两点值相等</li>
+<li>判断方程根存在<ul>
+<li>介值定理</li>
+<li>罗尔中值定理，也需构造辅助函数（原函数）</li>
+</ul>
+</li>
+<li>用中值定理处理 2 个变量的等式<ul>
+<li>首先考虑两者相等</li>
+<li>寻找三点值相等</li>
+<li>解 k 法：将其中一部分视为常数 k，构造辅助函数，令端点值相等（罗尔中值条件），解出 k 并用变量表示。</li>
+</ul>
+</li>
+</ul>
+<h3 id="泰勒公式"><a href="#泰勒公式" class="headerlink" title="泰勒公式"></a>泰勒公式</h3><p>出现二阶及以上的导数，可以用泰勒公式，展开点多选择特殊点，如极值点，中点等。  </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Math/" rel="tag">#Math</a>
+          
+            <a href="/tags/Calculus/" rel="tag">#Calculus</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/30/Math-Calculus-indefiniteIntegration/" rel="next" title="微积分——不定积分计算">
+                <i class="fa fa-chevron-left"></i> 微积分——不定积分计算
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/03/ML-MLT-8-decisionTree/" rel="prev" title="机器学习技法第九课——Decision Tree">
+                机器学习技法第九课——Decision Tree <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Blunt" />
+          <p class="site-author-name" itemprop="name">Blunt</p>
+          <p class="site-description motion-element" itemprop="description">email：summer15y@163.com</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">72</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#极值点、拐点与泰勒公式"><span class="nav-number">1.</span> <span class="nav-text">极值点、拐点与泰勒公式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#凹凸性与泰勒公式"><span class="nav-number">2.</span> <span class="nav-text">凹凸性与泰勒公式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#微分中值定理"><span class="nav-number">3.</span> <span class="nav-text">微分中值定理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#泰勒公式"><span class="nav-number">4.</span> <span class="nav-text">泰勒公式</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Blunt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

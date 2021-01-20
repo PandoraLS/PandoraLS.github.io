@@ -1,0 +1,624 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Tools,Ubuntu," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="参考教程 设计三个用户：ftp, ftpadmin, ftpguest。目录结构：  /home/ftp, ftp可读可写 /home/ftpadmin, ftpadmin可读可写 /home/ftpadmin/shares, ftpguest可读  vsftp安装123456# 检查是否已经安装vsftpd -v# 安装sudo apt-get install vsftpd# 备份配置文件sud">
+<meta name="keywords" content="Tools,Ubuntu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu16上安装vsftp服务器">
+<meta property="og:url" content="http://yoursite.com/2018/09/26/Tools-UbuntuFTP/index.html">
+<meta property="og:site_name" content="HotSummer">
+<meta property="og:description" content="参考教程 设计三个用户：ftp, ftpadmin, ftpguest。目录结构：  /home/ftp, ftp可读可写 /home/ftpadmin, ftpadmin可读可写 /home/ftpadmin/shares, ftpguest可读  vsftp安装123456# 检查是否已经安装vsftpd -v# 安装sudo apt-get install vsftpd# 备份配置文件sud">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-26T11:15:10.280Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ubuntu16上安装vsftp服务器">
+<meta name="twitter:description" content="参考教程 设计三个用户：ftp, ftpadmin, ftpguest。目录结构：  /home/ftp, ftp可读可写 /home/ftpadmin, ftpadmin可读可写 /home/ftpadmin/shares, ftpguest可读  vsftp安装123456# 检查是否已经安装vsftpd -v# 安装sudo apt-get install vsftpd# 备份配置文件sud">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+
+  <title> Ubuntu16上安装vsftp服务器 | HotSummer </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HotSummer</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Ubuntu16上安装vsftp服务器
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2018-09-26T16:44:15+08:00" content="2018-09-26">
+              2018-09-26
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Tools/" itemprop="url" rel="index">
+                    <span itemprop="name">Tools</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>参考<a href="https://segmentfault.com/a/1190000012648324" target="_blank" rel="noopener">教程</a></p>
+<p>设计三个用户：ftp, ftpadmin, ftpguest。目录结构：</p>
+<ul>
+<li>/home/ftp, ftp可读可写</li>
+<li>/home/ftpadmin, ftpadmin可读可写</li>
+<li>/home/ftpadmin/shares, ftpguest可读</li>
+</ul>
+<h4 id="vsftp安装"><a href="#vsftp安装" class="headerlink" title="vsftp安装"></a>vsftp安装</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查是否已经安装</span></span><br><span class="line">vsftpd -v</span><br><span class="line"><span class="comment"># 安装</span></span><br><span class="line">sudo apt-get install vsftpd</span><br><span class="line"><span class="comment"># 备份配置文件</span></span><br><span class="line">sudo cp /etc/vsftpd.conf /etc/vsftpd.conf.backup</span><br></pre></td></tr></table></figure>
+<h4 id="打开端口"><a href="#打开端口" class="headerlink" title="打开端口"></a>打开端口</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看防火墙状态</span></span><br><span class="line">sudo ufw status</span><br><span class="line"><span class="comment"># 打开20/21号端口</span></span><br><span class="line">sudo ufw allow 20/tcp</span><br><span class="line">sudo ufw allow 21/tcp</span><br></pre></td></tr></table></figure>
+<h4 id="创建目录与用户"><a href="#创建目录与用户" class="headerlink" title="创建目录与用户"></a>创建目录与用户</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo useradd -d /home/ftpadmin -s /bin/bash ftpadmin</span><br><span class="line">sudo passwd ftpadmin</span><br><span class="line"></span><br><span class="line">sudo useradd -s /bin/bash ftpguest</span><br><span class="line">sudo passwd ftpguest</span><br><span class="line"></span><br><span class="line">sudo mkdir /home/ftp</span><br><span class="line">sudo chown ftp:ftp /home/ftp</span><br><span class="line">sudo usermod -d /home/ftp ftp</span><br></pre></td></tr></table></figure>
+<h4 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>vsftpd配置文件详解<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br></pre></td><td class="code"><pre><span class="line">1.默认配置：</span><br><span class="line">1&gt;允许匿名用户和本地用户登陆。</span><br><span class="line">     anonymous_enable=YES</span><br><span class="line">     local_enable=YES</span><br><span class="line">2&gt;匿名用户使用的登陆名为ftp或anonymous，口令为空；匿名用户不能离开匿名用户家目录/var/ftp,且只能下载不能上传。</span><br><span class="line">3&gt;本地用户的登录名为本地用户名，口令为此本地用户的口令；本地用户可以在自 己家目录中进行读写操作；本地用户可以离开自家目录切换至有权限访问的其他目录，并在权限允许的情况下进行上传/下载。</span><br><span class="line">    write_enable=YES</span><br><span class="line">4&gt;写在文件/etc/vsftpd.ftpusers中的本地用户禁止登陆。</span><br><span class="line">            </span><br><span class="line">2.配置文件格式：  </span><br><span class="line">vsftpd.conf 的内容非常单纯，每一行即为一项设定。若是空白行或是开头为#的一行，将会被忽略。内容的格式只有一种，如下所示</span><br><span class="line">option=value</span><br><span class="line">要注意的是，等号两边不能加空白。</span><br><span class="line"> </span><br><span class="line">3.匿名用户（anonymous）设置</span><br><span class="line">anonymous_enable=YES/NO（YES）</span><br><span class="line">控制是否允许匿名用户登入，YES 为允许匿名登入，NO 为不允许。默认值为YES。</span><br><span class="line">write_enable=YES/NO（YES）</span><br><span class="line">是否允许登陆用户有写权限。属于全局设置，默认值为YES。</span><br><span class="line">no_anon_password=YES/NO（NO）</span><br><span class="line">若是启动这项功能，则使用匿名登入时，不会询问密码。默认值为NO。</span><br><span class="line">ftp_username=ftp</span><br><span class="line">定义匿名登入的使用者名称。默认值为ftp。</span><br><span class="line">anon_root=/var/ftp</span><br><span class="line">使用匿名登入时，所登入的目录。默认值为/var/ftp。注意ftp目录不能是777的权限属性，即匿名用户的家目录不能有777的权限。</span><br><span class="line">anon_upload_enable=YES/NO（NO）</span><br><span class="line">如果设为YES，则允许匿名登入者有上传文件（非目录）的权限，只有在write_enable=YES时，此项才有效。当然，匿名用户必须要有对上层目录的写入权。默认值为NO。</span><br><span class="line">anon_world_readable_only=YES/NO（YES）</span><br><span class="line">如果设为YES，则允许匿名登入者下载可阅读的档案（可以下载到本机阅读，不能直接在FTP服务器中打开阅读）。默认值为YES。</span><br><span class="line">anon_mkdir_write_enable=YES/NO（NO）</span><br><span class="line">如果设为YES，则允许匿名登入者有新增目录的权限，只有在write_enable=YES时，此项才有效。当然，匿名用户必须要有对上层目录的写入权。默认值为NO。</span><br><span class="line">anon_other_write_enable=YES/NO（NO）</span><br><span class="line">如果设为YES，则允许匿名登入者更多于上传或者建立目录之外的权限，譬如删除或者重命名。（如果anon_upload_enable=NO，则匿名用户不能上传文件，但可以删除或者重命名已经存在的文件；如果anon_mkdir_write_enable=NO，则匿名用户不能上传或者新建文件夹，但可以删除或者重命名已经存在的文件夹。）默认值为NO。</span><br><span class="line">chown_uploads=YES/NO（NO）</span><br><span class="line">设置是否改变匿名用户上传文件（非目录）的属主。默认值为NO。</span><br><span class="line">chown_username=username</span><br><span class="line">设置匿名用户上传文件（非目录）的属主名。建议不要设置为root。</span><br><span class="line">anon_umask=077</span><br><span class="line">设置匿名登入者新增或上传档案时的umask 值。默认值为077，则新建档案的对应权限为700。</span><br><span class="line">deny_email_enable=YES/NO（NO）</span><br><span class="line">若是启动这项功能，则必须提供一个档案/etc/vsftpd/banner_emails，内容为email address。若是使用匿名登入，则会要求输入email address，若输入的email address 在此档案内，则不允许进入。默认值为NO。</span><br><span class="line">banned_email_file=/etc/vsftpd/banner_emails</span><br><span class="line">此文件用来输入email address，只有在deny_email_enable=YES时，才会使用到此档案。若是使用匿名登入，则会要求输入email address，若输入的email address 在此档案内，则不允许进入。</span><br><span class="line"> </span><br><span class="line">4.本地用户设置</span><br><span class="line">local_enable=YES/NO（YES）</span><br><span class="line">控制是否允许本地用户登入，YES 为允许本地用户登入，NO为不允许。默认值为YES。</span><br><span class="line">local_root=/home/username</span><br><span class="line">当本地用户登入时，将被更换到定义的目录下。默认值为各用户的家目录。</span><br><span class="line">write_enable=YES/NO（YES）</span><br><span class="line">是否允许登陆用户有写权限。属于全局设置，默认值为YES。</span><br><span class="line">local_umask=022</span><br><span class="line">本地用户新增档案时的umask 值。默认值为077。</span><br><span class="line">file_open_mode=0755</span><br><span class="line">本地用户上传档案后的档案权限，与chmod 所使用的数值相同。默认值为0666。</span><br><span class="line"> </span><br><span class="line">5.欢迎语设置</span><br><span class="line">dirmessage_enable=YES/NO（YES）</span><br><span class="line">如果启动这个选项，那么使用者第一次进入一个目录时，会检查该目录下是否有.message这个档案，如果有，则会出现此档案的内容，通常这个档案会放置欢迎话语，或是对该目录的说明。默认值为开启。</span><br><span class="line">message_file=.message</span><br><span class="line">设置目录消息文件，可将要显示的信息写入该文件。默认值为.message。</span><br><span class="line">banner_file=/etc/vsftpd/banner</span><br><span class="line">当使用者登入时，会显示此设定所在的档案内容，通常为欢迎话语或是说明。默认值为无。如果欢迎信息较多，则使用该配置项。</span><br><span class="line">ftpd_banner=Welcome to BOB&apos;s FTP server</span><br><span class="line">这里用来定义欢迎话语的字符串，banner_file是档案的形式，而ftpd_banner 则是字符串的形式。预设为无。</span><br><span class="line"> </span><br><span class="line">6.控制用户是否允许切换到上级目录</span><br><span class="line">在默认配置下，本地用户登入FTP后可以使用cd命令切换到其他目录，这样会对系统带来安全隐患。可以通过以下三条配置文件来控制用户切换目录。</span><br><span class="line">chroot_list_enable=YES/NO（NO）</span><br><span class="line">设置是否启用chroot_list_file配置项指定的用户列表文件。默认值为NO。</span><br><span class="line">chroot_list_file=/etc/vsftpd.chroot_list</span><br><span class="line">用于指定用户列表文件，该文件用于控制哪些用户可以切换到用户家目录的上级目录。</span><br><span class="line">chroot_local_user=YES/NO（NO）</span><br><span class="line">用于指定用户列表文件中的用户是否允许切换到上级目录。默认值为NO。</span><br><span class="line">通过搭配能实现以下几种效果：</span><br><span class="line">①当chroot_list_enable=YES，chroot_local_user=YES时，在/etc/vsftpd.chroot_list文件中列出的用户，可以切换到其他目录；未在文件中列出的用户，不能切换到其他目录。</span><br><span class="line">②当chroot_list_enable=YES，chroot_local_user=NO时，在/etc/vsftpd.chroot_list文件中列出的用户，不能切换到其他目录；未在文件中列出的用户，可以切换到其他目录。</span><br><span class="line">③当chroot_list_enable=NO，chroot_local_user=YES时，所有的用户均不能切换到其他目录。</span><br><span class="line">④当chroot_list_enable=NO，chroot_local_user=NO时，所有的用户均可以切换到其他目录。</span><br><span class="line"> </span><br><span class="line">7.数据传输模式设置</span><br><span class="line">FTP在传输数据时，可以使用二进制方式，也可以使用ASCII模式来上传或下载数据。</span><br><span class="line">ascii_upload_enable=YES/NO（NO）</span><br><span class="line">设置是否启用ASCII 模式上传数据。默认值为NO。</span><br><span class="line">ascii_download_enable=YES/NO（NO）</span><br><span class="line">设置是否启用ASCII 模式下载数据。默认值为NO。</span><br><span class="line"> </span><br><span class="line">8.访问控制设置</span><br><span class="line">两种控制方式：一种控制主机访问，另一种控制用户访问。</span><br><span class="line">①控制主机访问：</span><br><span class="line">tcp_wrappers=YES/NO（YES）</span><br><span class="line">设置vsftpd是否与tcp wrapper相结合来进行主机的访问控制。默认值为YES。如果启用，则vsftpd服务器会检查/etc/hosts.allow 和/etc/hosts.deny 中的设置，来决定请求连接的主机，是否允许访问该FTP服务器。这两个文件可以起到简易的防火墙功能。</span><br><span class="line">比如：若要仅允许192.168.0.1—192.168.0.254的用户可以连接FTP服务器，则在/etc/hosts.allow文件中添加以下内容：</span><br><span class="line">vsftpd:192.168.0. :allow</span><br><span class="line">all:all :deny</span><br><span class="line">②控制用户访问：</span><br><span class="line">对于用户的访问控制可以通过/etc目录下的vsftpd.user_list和ftpusers文件来实现。</span><br><span class="line">userlist_file=/etc/vsftpd.user_list</span><br><span class="line">控制用户访问FTP的文件，里面写着用户名称。一个用户名称一行。</span><br><span class="line">userlist_enable=YES/NO（NO）</span><br><span class="line">是否启用vsftpd.user_list文件。</span><br><span class="line">userlist_deny=YES/NO（YES）</span><br><span class="line">决定vsftpd.user_list文件中的用户是否能够访问FTP服务器。若设置为YES，则vsftpd.user_list文件中的用户不允许访问FTP，若设置为NO，则只有vsftpd.user_list文件中的用户才能访问FTP。</span><br><span class="line">/etc/vsftpd/ftpusers文件专门用于定义不允许访问FTP服务器的用户列表（注意:如果userlist_enable=YES,userlist_deny=NO,此时如果在vsftpd.user_list和ftpusers中都有某个用户时，那么这个用户是不能够访问FTP的，即ftpusers的优先级要高）。默认情况下vsftpd.user_list和ftpusers，这两个文件已经预设置了一些不允许访问FTP服务器的系统内部账户。如果系统没有这两个文件，那么新建这两个文件，将用户添加进去即可。</span><br><span class="line"> </span><br><span class="line">9.访问速率设置</span><br><span class="line">anon_max_rate=0</span><br><span class="line">设置匿名登入者使用的最大传输速度，单位为B/s，0 表示不限制速度。默认值为0。</span><br><span class="line">local_max_rate=0</span><br><span class="line">本地用户使用的最大传输速度，单位为B/s，0 表示不限制速度。预设值为0。</span><br><span class="line"> </span><br><span class="line">10.超时时间设置</span><br><span class="line">accept_timeout=60</span><br><span class="line">设置建立FTP连接的超时时间，单位为秒。默认值为60。</span><br><span class="line">connect_timeout=60</span><br><span class="line">PORT 方式下建立数据连接的超时时间，单位为秒。默认值为60。</span><br><span class="line">data_connection_timeout=120</span><br><span class="line">设置建立FTP数据连接的超时时间，单位为秒。默认值为120。</span><br><span class="line">idle_session_timeout=300</span><br><span class="line">设置多长时间不对FTP服务器进行任何操作，则断开该FTP连接，单位为秒。默认值为300 。</span><br><span class="line"> </span><br><span class="line">11.日志文件设置</span><br><span class="line">xferlog_enable= YES/NO（YES）</span><br><span class="line">是否启用上传/下载日志记录。如果启用，则上传与下载的信息将被完整纪录在xferlog_file 所定义的档案中。预设为开启。</span><br><span class="line">xferlog_file=/var/log/vsftpd.log</span><br><span class="line">设置日志文件名和路径，默认值为/var/log/vsftpd.log。</span><br><span class="line">xferlog_std_format=YES/NO（NO）</span><br><span class="line">如果启用，则日志文件将会写成xferlog的标准格式，如同wu-ftpd 一般。默认值为关闭。</span><br><span class="line">log_ftp_protocol=YES|NO（NO） </span><br><span class="line">如果启用此选项，所有的FTP请求和响应都会被记录到日志中，默认日志文件在/var/log/vsftpd.log。启用此选项时，xferlog_std_format不能被激活。这个选项有助于调试。默认值为NO。</span><br><span class="line"> </span><br><span class="line">12.定义用户配置文件</span><br><span class="line">在vsftpd中，可以通过定义用户配置文件来实现不同的用户使用不同的配置。</span><br><span class="line">user_config_dir=/etc/vsftpd/userconf</span><br><span class="line">设置用户配置文件所在的目录。当设置了该配置项后，用户登陆服务器后，系统就会到/etc/vsftpd/userconf目录下，读取与当前用户名相同的文件，并根据文件中的配置命令，对当前用户进行更进一步的配置。</span><br><span class="line">例如：定义user_config_dir=/etc/vsftpd/userconf，且主机上有使用者 test1,test2，那么我们就在user_config_dir 的目录新增文件名为test1和test2两个文件。若是test1 登入，则会读取user_config_dir 下的test1 这个档案内的设定。默认值为无。利用用户配置文件，可以实现对不同用户进行访问速度的控制，在各用户配置文件中定义local_max_rate=XX，即可。</span><br><span class="line"> </span><br><span class="line">13.FTP的工作方式与端口设置</span><br><span class="line">FTP有两种工作方式：PORT FTP（主动模式）和PASV FTP（被动模式）</span><br><span class="line">listen_port=21</span><br><span class="line">设置FTP服务器建立连接所监听的端口，默认值为21。</span><br><span class="line">connect_from_port_20=YES/NO</span><br><span class="line">指定FTP使用20端口进行数据传输，默认值为YES。</span><br><span class="line">ftp_data_port=20</span><br><span class="line">设置在PORT方式下，FTP数据连接使用的端口，默认值为20。</span><br><span class="line">pasv_enable=YES/NO（YES）</span><br><span class="line">若设置为YES，则使用PASV工作模式；若设置为NO，则使用PORT模式。默认值为YES，即使用PASV工作模式。</span><br><span class="line">pasv_max_port=0</span><br><span class="line">在PASV工作模式下，数据连接可以使用的端口范围的最大端口，0 表示任意端口。默认值为0。</span><br><span class="line">pasv_min_port=0</span><br><span class="line">在PASV工作模式下，数据连接可以使用的端口范围的最小端口，0 表示任意端口。默认值为0。</span><br><span class="line"> </span><br><span class="line">14.与连接相关的设置</span><br><span class="line">listen=YES/NO（YES）</span><br><span class="line">设置vsftpd服务器是否以standalone模式运行。以standalone模式运行是一种较好的方式，此时listen必须设置为YES，此为默认值。建议不要更改，有很多与服务器运行相关的配置命令，需要在此模式下才有效。若设置为NO，则vsftpd不是以独立的服务运行，要受到xinetd服务的管控，功能上会受到限制。</span><br><span class="line">max_clients=0</span><br><span class="line">设置vsftpd允许的最大连接数，默认值为0，表示不受限制。若设置为100时，则同时允许有100个连接，超出的将被拒绝。只有在standalone模式运行才有效。</span><br><span class="line">max_per_ip=0</span><br><span class="line">设置每个IP允许与FTP服务器同时建立连接的数目。默认值为0，表示不受限制。只有在standalone模式运行才有效。</span><br><span class="line">listen_address=IP地址</span><br><span class="line">设置FTP服务器在指定的IP地址上侦听用户的FTP请求。若不设置，则对服务器绑定的所有IP地址进行侦听。只有在standalone模式运行才有效。</span><br><span class="line">setproctitle_enable=YES/NO（NO）</span><br><span class="line">设置每个与FTP服务器的连接，是否以不同的进程表现出来。默认值为NO，此时使用ps aux |grep ftp只会有一个vsftpd的进程。若设置为YES，则每个连接都会有一个vsftpd的进程。</span><br><span class="line"> </span><br><span class="line">15.虚拟用户设置</span><br><span class="line">虚拟用户使用PAM认证方式。</span><br><span class="line">pam_service_name=vsftpd</span><br><span class="line">设置PAM使用的名称，默认值为/etc/pam.d/vsftpd。</span><br><span class="line">guest_enable= YES/NO（NO）</span><br><span class="line">启用虚拟用户。默认值为NO。</span><br><span class="line">guest_username=ftp</span><br><span class="line">这里用来映射虚拟用户。默认值为ftp。</span><br><span class="line">virtual_use_local_privs=YES/NO（NO）</span><br><span class="line">当该参数激活（YES）时，虚拟用户使用与本地用户相同的权限。当此参数关闭（NO）时，虚拟用户使用与匿名用户相同的权限。默认情况下此参数是关闭的（NO）。</span><br><span class="line"> </span><br><span class="line">16.其他设置</span><br><span class="line">text_userdb_names= YES/NO（NO）</span><br><span class="line">设置在执行ls –la之类的命令时，是显示UID、GID还是显示出具体的用户名和组名。默认值为NO，即以UID和GID方式显示。若希望显示用户名和组名，则设置为YES。</span><br><span class="line">ls_recurse_enable=YES/NO（NO）</span><br><span class="line">若是启用此功能，则允许登入者使用ls –R（可以查看当前目录下子目录中的文件）这个指令。默认值为NO。</span><br><span class="line">hide_ids=YES/NO（NO）</span><br><span class="line">如果启用此功能，所有档案的拥有者与群组都为ftp，也就是使用者登入使用ls -al之类的指令，所看到的档案拥有者跟群组均为ftp。默认值为关闭。</span><br><span class="line">download_enable=YES/NO（YES）</span><br><span class="line">如果设置为NO，所有的文件都不能下载到本地，文件夹不受影响。默认值为YES。</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Tools/" rel="tag">#Tools</a>
+          
+            <a href="/tags/Ubuntu/" rel="tag">#Ubuntu</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/18/Speech-tech/" rel="next" title="Speech相关技术基础">
+                <i class="fa fa-chevron-left"></i> Speech相关技术基础
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/12/Web-JavaScripyt/" rel="prev" title="Javascript基础">
+                Javascript基础 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Blunt" />
+          <p class="site-author-name" itemprop="name">Blunt</p>
+          <p class="site-description motion-element" itemprop="description">email：summer15y@163.com</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">72</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#vsftp安装"><span class="nav-number">1.</span> <span class="nav-text">vsftp安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打开端口"><span class="nav-number">2.</span> <span class="nav-text">打开端口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建目录与用户"><span class="nav-number">3.</span> <span class="nav-text">创建目录与用户</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置文件"><span class="nav-number">4.</span> <span class="nav-text">配置文件</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Blunt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

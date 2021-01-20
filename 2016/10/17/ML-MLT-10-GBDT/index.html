@@ -1,0 +1,651 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ML,机器学习技法,Ensemble Learning," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="此文是本人学习林轩田老师教授的机器学习技法第十一课—— Gradient Boosted Decision Tree ——的笔记。这节课会讲两个模型：Adaptive Boosted Decision Tree 和 Gradient Boosted Decision Tree (GBDT)。本质上讲，两者同属 boosting 方法结合 Decision Tree，只是他们的 error func">
+<meta name="keywords" content="ML,机器学习技法,Ensemble Learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习技法第十课——Gradient Boosted Decision Tree">
+<meta property="og:url" content="http://yoursite.com/2016/10/17/ML-MLT-10-GBDT/index.html">
+<meta property="og:site_name" content="HotSummer">
+<meta property="og:description" content="此文是本人学习林轩田老师教授的机器学习技法第十一课—— Gradient Boosted Decision Tree ——的笔记。这节课会讲两个模型：Adaptive Boosted Decision Tree 和 Gradient Boosted Decision Tree (GBDT)。本质上讲，两者同属 boosting 方法结合 Decision Tree，只是他们的 error func">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2016-10-21T05:02:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习技法第十课——Gradient Boosted Decision Tree">
+<meta name="twitter:description" content="此文是本人学习林轩田老师教授的机器学习技法第十一课—— Gradient Boosted Decision Tree ——的笔记。这节课会讲两个模型：Adaptive Boosted Decision Tree 和 Gradient Boosted Decision Tree (GBDT)。本质上讲，两者同属 boosting 方法结合 Decision Tree，只是他们的 error func">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+
+  <title> 机器学习技法第十课——Gradient Boosted Decision Tree | HotSummer </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HotSummer</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                机器学习技法第十课——Gradient Boosted Decision Tree
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-10-17T18:22:18+08:00" content="2016-10-17">
+              2016-10-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>此文是本人学习<a href="http://www.csie.ntu.edu.tw/~htlin/" target="_blank" rel="noopener">林轩田老师</a>教授的机器学习技法第十一课—— Gradient Boosted Decision Tree ——的笔记。这节课会讲两个模型：Adaptive Boosted Decision Tree 和 Gradient Boosted Decision Tree (GBDT)。本质上讲，两者同属 boosting 方法结合 Decision Tree，只是他们的 error function 不同，训练方法稍有差别。（这节课有许多证明，因为太笨没懂就没详述 :-) ）</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://www.csie.ntu.edu.tw/~htlin/mooc/" target="_blank" rel="noopener">机器学习技法</a></li>
+<li><a href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/211_handout.pdf" target="_blank" rel="noopener">课件</a></li>
+<li><a href="/2016/07/28/ML-MLT-7-adaBoost/" title="机器学习技法第八课——Adaptive Boosting">机器学习技法第八课——Adaptive Boosting</a></li>
+<li><a href="/2016/08/03/ML-MLT-8-decisionTree/" title="机器学习技法第九课——Decision Tree">机器学习技法第九课——Decision Tree</a></li>
+<li><a href="https://en.wikipedia.org/wiki/AdaBoost" target="_blank" rel="noopener">AdaBoost - wikipedia</a></li>
+<li><a href="http://suanfazu.com/t/gbdt-die-dai-jue-ce-shu-ru-men-jiao-cheng/135" target="_blank" rel="noopener">Gbdt 迭代决策树入门教程</a></li>
+</ul>
+<h3 id="Adaptive-Boosted-Decision-Tree"><a href="#Adaptive-Boosted-Decision-Tree" class="headerlink" title="Adaptive Boosted Decision Tree"></a>Adaptive Boosted Decision Tree</h3><p>Adaptive Boosted，即 AdaBoost，与 Decision Tree 已经在前面课程做过介绍，Adaptive Boosted Decision Tree 以 AdaBoost 为框架，以 Decision Tree 为弱模型，整合成一个模型。而在 <a href="/2016/07/28/ML-MLT-7-adaBoost/" title="机器学习技法第八课——Adaptive Boosting">机器学习技法第八课——Adaptive Boosting</a> 中，弱模型简单地选取 Decision Stump，这也算 Adaptive Boosted Decision Tree 的一个特例，老师称之为 <strong>AdaBoost-Stump</strong>。</p>
+<h4 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h4><p>在训练过程中，应该注意两点。</p>
+<p>一、决策树应该剪枝。一方面为了正则化，另一方面，完全决策树的误差为零，这使得以修正误差为中心的 AdaBoost 难以进行。</p>
+<p>二、从整个训练集中抽样出每次迭代的训练数据，每笔数据的选中概率正比于 AdaBoost 所计算的权重，替代了原来（第八课）将权重直接用于 error function 的方式。一方面与剪枝目的相同，避免将所有数据输入完全树导致误差为零。另一方面，权重不仅能通过抽取概率体现数据的重要程度，同时又能避免对弱模型 error function 的修改。</p>
+<p>训练过程可参考第八课，改动的只有：在训练弱模型时，根据权重随机抽取训练数据，并训练出剪枝的决策树。</p>
+<h4 id="AdaBoost-与梯度下降"><a href="#AdaBoost-与梯度下降" class="headerlink" title="AdaBoost 与梯度下降"></a>AdaBoost 与梯度下降</h4><p>课上，老师详细证明了 AdaBoost 的训练过程是在最小（优）化函数，所谓的 loss function ：</p>
+<p>$$ loss = \frac{1}{N} \sum_{n=1}^N \exp (-y_n s_n^{(T)}) $$</p>
+<p>其中 $N$ 表示数据量， $T$ 表示迭代次数， $s_n^{(T)}$ 表示 $T$ 次迭代后模型估计值：</p>
+<p>$$ s<em>n^{(T)} = \sum</em>{t=1}^T\alpha_t g_t(\mathbf{x}_n) $$</p>
+<p>类似梯度下降，AdaBoost 的每次迭代都向最优点靠近，最终到达最优点。AdaBoost 的正向推导可参考：<a href="https://en.wikipedia.org/wiki/AdaBoost" target="_blank" rel="noopener">AdaBoost - wikipedia</a>。</p>
+<h3 id="Gradient-Boosted-Decision-Tree"><a href="#Gradient-Boosted-Decision-Tree" class="headerlink" title="Gradient Boosted Decision Tree"></a>Gradient Boosted Decision Tree</h3><p>简称 GBDT，它的思想与 AdaBoost 是相同的，只是 loss function 被替换成其他函数。流行用残差平方函数替换 AdaBoost 中的 $\exp$ 函数，以下只介绍这种 GBDT。</p>
+<p>$$ loss=\frac{1}{N} \sum_{n=1}^N (s_n^{(T)} - y_n)^2 $$</p>
+<h4 id="模型训练-1"><a href="#模型训练-1" class="headerlink" title="模型训练"></a>模型训练</h4><p>GBDT 的训练流程与 AdaBoost 稍有不同。</p>
+<p>每次迭代根据上次估计值与实际值的残差（residual）训练决策树，不断减小残差使估计值逼近实际值。参考博文 <a href="http://suanfazu.com/t/gbdt-die-dai-jue-ce-shu-ru-men-jiao-cheng/135" target="_blank" rel="noopener">Gbdt 迭代决策树入门教程</a>，它详细介绍了 GBDT 所隐含的直觉。</p>
+<p>每次迭代的权重计算公式：</p>
+<p>$$ \alpha<em>t = \frac{\sum</em>{n=1}^N g_t(\mathbf{x}_n)(y_n-s<em>n^{(t-1)})}{\sum</em>{n=1}^N g_t^2(\mathbf{x}_n)} $$</p>
+<p>其中 $s_n^{(t-1)}$ 表示 $t-1$ 次迭代（前次迭代）后模型估计值。</p>
+<ul>
+<li>$s_1=s_2=…=s_n$</li>
+<li>for t=1,2,…,T<ul>
+<li>根据数据集 ${(\mathbf{x}_n, y_n-s_n)}$，训练出决策树 $g_t$</li>
+<li>根据数据集 ${(g_t(\mathbf{x}_n),y_n-s_n)}$ 计算权重 $\alpha_t$</li>
+<li>更新 $s_n \leftarrow s_n + \alpha_t g_t(\mathbf{x}_n)$</li>
+</ul>
+</li>
+<li>返回模型 $G(\mathbf{x})=\sum\alpha_t g_t(\mathbf{x}_n)$</li>
+</ul>
+<p>注，在一些实现中，权重 $\alpha_t$ 直接设定为 1，没有经过计算。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ML/" rel="tag">#ML</a>
+          
+            <a href="/tags/机器学习技法/" rel="tag">#机器学习技法</a>
+          
+            <a href="/tags/Ensemble-Learning/" rel="tag">#Ensemble Learning</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/28/Math-LinAlg-analyticGeometry/" rel="next" title="空间解析几何">
+                <i class="fa fa-chevron-left"></i> 空间解析几何
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/15/ML-Preprcs-NormStd/" rel="prev" title="数据预处理——中心化、归一化与标准化">
+                数据预处理——中心化、归一化与标准化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Blunt" />
+          <p class="site-author-name" itemprop="name">Blunt</p>
+          <p class="site-description motion-element" itemprop="description">email：summer15y@163.com</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">72</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Adaptive-Boosted-Decision-Tree"><span class="nav-number">2.</span> <span class="nav-text">Adaptive Boosted Decision Tree</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模型训练"><span class="nav-number">2.1.</span> <span class="nav-text">模型训练</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AdaBoost-与梯度下降"><span class="nav-number">2.2.</span> <span class="nav-text">AdaBoost 与梯度下降</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gradient-Boosted-Decision-Tree"><span class="nav-number">3.</span> <span class="nav-text">Gradient Boosted Decision Tree</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模型训练-1"><span class="nav-number">3.1.</span> <span class="nav-text">模型训练</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Blunt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
