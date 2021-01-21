@@ -1,0 +1,654 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Math,Linear Algebra," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="矩阵相关 几何上看，特征向量乘对应矩阵相当于做一次“伸缩”变换。 每个方阵都有（实数或复数）特征值， 而一个特征值对应无数个特征向量。\对角化指 相似对角化， 指求解与方阵 相似 的对角矩阵的过程。\正交化指求解与线性无关向量组 等价 的正交向量组的过程，因为等价，两个向量组在同一子空间。 相关概念特征子空间（eigenspace）具有相同特征值的特征向量与一个同维数的零向量的集合。 特征方程关于">
+<meta name="keywords" content="Math,Linear Algebra">
+<meta property="og:type" content="article">
+<meta property="og:title" content="矩阵特征值、正交化与对角化">
+<meta property="og:url" content="http://yoursite.com/2016/09/17/Math-LinAlg-eigenOrthDiag/index.html">
+<meta property="og:site_name" content="HotSummer">
+<meta property="og:description" content="矩阵相关 几何上看，特征向量乘对应矩阵相当于做一次“伸缩”变换。 每个方阵都有（实数或复数）特征值， 而一个特征值对应无数个特征向量。\对角化指 相似对角化， 指求解与方阵 相似 的对角矩阵的过程。\正交化指求解与线性无关向量组 等价 的正交向量组的过程，因为等价，两个向量组在同一子空间。 相关概念特征子空间（eigenspace）具有相同特征值的特征向量与一个同维数的零向量的集合。 特征方程关于">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2016-10-01T14:47:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="矩阵特征值、正交化与对角化">
+<meta name="twitter:description" content="矩阵相关 几何上看，特征向量乘对应矩阵相当于做一次“伸缩”变换。 每个方阵都有（实数或复数）特征值， 而一个特征值对应无数个特征向量。\对角化指 相似对角化， 指求解与方阵 相似 的对角矩阵的过程。\正交化指求解与线性无关向量组 等价 的正交向量组的过程，因为等价，两个向量组在同一子空间。 相关概念特征子空间（eigenspace）具有相同特征值的特征向量与一个同维数的零向量的集合。 特征方程关于">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+
+  <title> 矩阵特征值、正交化与对角化 | HotSummer </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HotSummer</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                矩阵特征值、正交化与对角化
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-17T15:12:13+08:00" content="2016-09-17">
+              2016-09-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Math/" itemprop="url" rel="index">
+                    <span itemprop="name">Math</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <a href="/2016/05/21/Math-LinAlg-Matrix/" title="矩阵相关">矩阵相关</a>
+<p>几何上看，特征向量乘对应矩阵相当于做一次“伸缩”变换。 <strong>每个方阵都有（实数或复数）特征值</strong>， 而一个特征值对应无数个特征向量。\<br>对角化指 <strong>相似对角化</strong>， 指求解与方阵 <strong>相似</strong> 的对角矩阵的过程。\<br>正交化指求解与线性无关向量组 <strong>等价</strong> 的正交向量组的过程，因为等价，两个向量组在同一子空间。</p>
+<h3 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h3><h4 id="特征子空间（eigenspace）"><a href="#特征子空间（eigenspace）" class="headerlink" title="特征子空间（eigenspace）"></a>特征子空间（eigenspace）</h4><p>具有相同特征值的特征向量与一个同维数的零向量的集合。</p>
+<h4 id="特征方程"><a href="#特征方程" class="headerlink" title="特征方程"></a>特征方程</h4><p>关于 $\lambda$ 的方程</p>
+<p>$$ \det (\lambda \mathbf{I}-\mathbf{A}) = 0 $$</p>
+<p>称为方阵 $\mathbf{A}$ 的特征方程。由特征值的定义公式推导，其解为方阵 $\mathbf{A}$ 的特征值，被称为 <strong>特征根</strong>， 根据解的重数分为单特征根与 k 重特征根。</p>
+<h4 id="特征值的代数重数与几何重数"><a href="#特征值的代数重数与几何重数" class="headerlink" title="特征值的代数重数与几何重数"></a>特征值的代数重数与几何重数</h4><p>特征方程特征值（特征根） $\lambda$ 的重数称为 $\lambda$ 的代数重数，而 $\lambda$ 的特征子空间的维数（基向量个数）称为几何重数。 <strong>特征值的几何重数不大于它的代数重数</strong>。</p>
+<h3 id="特征值与特征向量的计算"><a href="#特征值与特征向量的计算" class="headerlink" title="特征值与特征向量的计算"></a>特征值与特征向量的计算</h3><ol>
+<li>根据特征方程 $\det (\lambda \mathbf{I}-\mathbf{A}) = 0$ 计算全部特征根 $\lambda_1 \sim \lambda_k\;(k \le n)$</li>
+<li>线性方程组 $(\lambda_i \mathbf{I}-\mathbf{A})\mathbf{X}=\mathbf{0}$ 的通解 <strong>除去零向量</strong> 即对应于 $\lambda_i$ 的所有特征向量</li>
+</ol>
+<h3 id="一般矩阵的相似对角化"><a href="#一般矩阵的相似对角化" class="headerlink" title="一般矩阵的相似对角化"></a>一般矩阵的相似对角化</h3><p>$$ \mathbf{P}^{-1}\mathbf{A}\mathbf{P} = \mathbf{Diag}[\lambda_1, \lambda_2,…,\lambda_n] $$</p>
+<p>现需求解 $\lambda$ 与 $\mathbf{P}$。首先要求 A 能对角化。</p>
+<ol>
+<li>求解 A 的特征值 $\lambda$， 相似对角矩阵的对角元素即 $\lambda$， 每个特征值出现的次数与其代数重数相等</li>
+<li>求解每个特征值对应的特征向量，检查是否满足对角化条件。P 即特征列向量构成的矩阵，排列顺序与特征值相同。</li>
+</ol>
+<h3 id="施密特正交化"><a href="#施密特正交化" class="headerlink" title="施密特正交化"></a>施密特正交化</h3><p>前提是 <strong>向量组线性无关</strong>。 对 $\alpha_1,\alpha_2,…,\alpha_s$ 施密特正交化：</p>
+<p>$\beta_1 = \alpha_1$\<br>$\beta_2 = \alpha_2  - (\alpha_2\cdot \beta_1)/(\beta_1\cdot \beta_1)\,\beta_1$\<br>$\beta_3 = \alpha_3  - (\alpha_3\cdot \beta_1)/(\beta_1\cdot \beta_1)\,\beta_1 - (\alpha_3\cdot \beta_2)/(\beta_2\cdot \beta_2)\,\beta_2$\<br>…\<br>$\beta_s = \alpha_s  - (\alpha_s\cdot \beta_1)/(\beta_1\cdot \beta_1)\,\beta_1 - (\alpha_s\cdot \beta_2)/(\beta_2\cdot \beta_2)\,\beta_2-… - (\alpha<em>s\cdot \beta</em>{s-1})/(\beta<em>{s-1}\cdot \beta</em>{s-1})\,\beta_{s-1}$</p>
+<p>得到正交向量组，再令 $\gamma_i = \beta_i / (|\beta_i|)$ 得到标准正交向量组</p>
+<h3 id="实对称矩阵的相似对角化"><a href="#实对称矩阵的相似对角化" class="headerlink" title="实对称矩阵的相似对角化"></a>实对称矩阵的相似对角化</h3><p>与一般矩阵的相似对角化相同，但习惯更进一步，要求 $\mathbf{P}$ 正交，所以在对每个特征值求解出特征向量组后，需要做标准正交化处理。（不同特征值的特征向量彼此正交，不必处理）</p>
+<h3 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h3><h4 id="特征值的和积"><a href="#特征值的和积" class="headerlink" title="特征值的和积"></a>特征值的和积</h4><p>$$ \lambda_1 + \lambda_2 + … \lambda<em>n = a</em>{1,1} + a<em>{2,2} + … + a</em>{n,n} \<br>\lambda_1\lambda_2…\lambda_n = \det \mathbf{A} $$</p>
+<p>其中包括复数特征根。可得 <strong>方阵可逆的充要条件是其所有特征值全不为零</strong>。</p>
+<h4 id="不同特征值的特征向量线性无关"><a href="#不同特征值的特征向量线性无关" class="headerlink" title="不同特征值的特征向量线性无关"></a>不同特征值的特征向量线性无关</h4><h4 id="对角化与特征值的相关定理"><a href="#对角化与特征值的相关定理" class="headerlink" title="对角化与特征值的相关定理"></a>对角化与特征值的相关定理</h4><ul>
+<li><strong>相似矩阵的特征值相同</strong></li>
+<li>n 阶方阵能对角化的充要条件<ul>
+<li>A 的每个特征值 $\lambda_i$ 的代数重数 $k_i$ 等于方程组 $(\lambda_i \mathbf{I} - \mathbf{A}) \mathbf{X} = \mathbf{0}$ 的基础解系向量个数，即 $k_i=n - R(\lambda_i \mathbf{I} - \mathbf{A})$</li>
+<li>A 有 n 个线性无关的特征向量</li>
+<li>充分条件：特征值都是单特征根</li>
+</ul>
+</li>
+<li>相似对角方阵的对角元素是全部特征值</li>
+</ul>
+<h4 id="正交矩阵的相关性质"><a href="#正交矩阵的相关性质" class="headerlink" title="正交矩阵的相关性质"></a>正交矩阵的相关性质</h4><ul>
+<li>$\det \mathbf{A} = \pm 1$</li>
+<li>$\mathbf{A},\;\mathbf{B}$ 正交，则 $\mathbf{AB}$ 正交</li>
+</ul>
+<h4 id="实对称矩阵相关性质"><a href="#实对称矩阵相关性质" class="headerlink" title="实对称矩阵相关性质"></a>实对称矩阵相关性质</h4><ul>
+<li>特征值都是实数</li>
+<li>不同特征值的特征向量彼此正交</li>
+<li>一定有 <strong>正交方阵</strong> $\mathbf{C}$ 使之相似对角化 $\mathbf{C^{-1}AC}=\mathbf{C^TAC}$</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Math/" rel="tag">#Math</a>
+          
+            <a href="/tags/Linear-Algebra/" rel="tag">#Linear Algebra</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/13/Math-Calculus-multiIntegral/" rel="next" title="重积分">
+                <i class="fa fa-chevron-left"></i> 重积分
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/18/Math-LinAlg-quadraticForm/" rel="prev" title="二次型">
+                二次型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Blunt" />
+          <p class="site-author-name" itemprop="name">Blunt</p>
+          <p class="site-description motion-element" itemprop="description">email：summer15y@163.com</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">72</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#相关概念"><span class="nav-number">1.</span> <span class="nav-text">相关概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特征子空间（eigenspace）"><span class="nav-number">1.1.</span> <span class="nav-text">特征子空间（eigenspace）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特征方程"><span class="nav-number">1.2.</span> <span class="nav-text">特征方程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特征值的代数重数与几何重数"><span class="nav-number">1.3.</span> <span class="nav-text">特征值的代数重数与几何重数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特征值与特征向量的计算"><span class="nav-number">2.</span> <span class="nav-text">特征值与特征向量的计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一般矩阵的相似对角化"><span class="nav-number">3.</span> <span class="nav-text">一般矩阵的相似对角化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#施密特正交化"><span class="nav-number">4.</span> <span class="nav-text">施密特正交化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实对称矩阵的相似对角化"><span class="nav-number">5.</span> <span class="nav-text">实对称矩阵的相似对角化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#性质"><span class="nav-number">6.</span> <span class="nav-text">性质</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#特征值的和积"><span class="nav-number">6.1.</span> <span class="nav-text">特征值的和积</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不同特征值的特征向量线性无关"><span class="nav-number">6.2.</span> <span class="nav-text">不同特征值的特征向量线性无关</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对角化与特征值的相关定理"><span class="nav-number">6.3.</span> <span class="nav-text">对角化与特征值的相关定理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#正交矩阵的相关性质"><span class="nav-number">6.4.</span> <span class="nav-text">正交矩阵的相关性质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实对称矩阵相关性质"><span class="nav-number">6.5.</span> <span class="nav-text">实对称矩阵相关性质</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Blunt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

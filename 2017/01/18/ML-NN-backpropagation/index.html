@@ -1,0 +1,689 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ML,机器学习技法,NN," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="本文主要对神经网络反向传播（Backpropagation Algorithm）的求导关键部分做笔记，并简要介绍自编码器概念（Autoencoder）。 参考 UFLDL 林轩田老师 教授的《机器学习技法》 12课：神经网络  符号   符号 含义     $(x^i, y^i)$ 第 $i$ 个训练样本   $h_{W,b}(x)$ 输入为 $x$ 时的假设输出，其中包含参数 $W,b$   $">
+<meta name="keywords" content="ML,机器学习技法,NN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="神经网络之反向传播与自编码器">
+<meta property="og:url" content="http://yoursite.com/2017/01/18/ML-NN-backpropagation/index.html">
+<meta property="og:site_name" content="HotSummer">
+<meta property="og:description" content="本文主要对神经网络反向传播（Backpropagation Algorithm）的求导关键部分做笔记，并简要介绍自编码器概念（Autoencoder）。 参考 UFLDL 林轩田老师 教授的《机器学习技法》 12课：神经网络  符号   符号 含义     $(x^i, y^i)$ 第 $i$ 个训练样本   $h_{W,b}(x)$ 输入为 $x$ 时的假设输出，其中包含参数 $W,b$   $">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-01-18T12:12:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="神经网络之反向传播与自编码器">
+<meta name="twitter:description" content="本文主要对神经网络反向传播（Backpropagation Algorithm）的求导关键部分做笔记，并简要介绍自编码器概念（Autoencoder）。 参考 UFLDL 林轩田老师 教授的《机器学习技法》 12课：神经网络  符号   符号 含义     $(x^i, y^i)$ 第 $i$ 个训练样本   $h_{W,b}(x)$ 输入为 $x$ 时的假设输出，其中包含参数 $W,b$   $">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+
+  <title> 神经网络之反向传播与自编码器 | HotSummer </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HotSummer</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                神经网络之反向传播与自编码器
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-18T14:14:56+08:00" content="2017-01-18">
+              2017-01-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文主要对神经网络反向传播（Backpropagation Algorithm）的求导关键部分做笔记，并简要介绍自编码器概念（Autoencoder）。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="http://deeplearning.stanford.edu/wiki/index.php/UFLDL_Tutorial" target="_blank" rel="noopener">UFLDL</a></li>
+<li><a href="http://www.csie.ntu.edu.tw/~htlin/" target="_blank" rel="noopener">林轩田老师</a> 教授的《机器学习技法》 12课：神经网络</li>
+</ul>
+<h3 id="符号"><a href="#符号" class="headerlink" title="符号"></a>符号</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th style="text-align:center">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">$(x^i, y^i)$</td>
+<td style="text-align:center">第 $i$ 个训练样本</td>
+</tr>
+<tr>
+<td style="text-align:center">$h_{W,b}(x)$</td>
+<td style="text-align:center">输入为 $x$ 时的假设输出，其中包含参数 $W,b$</td>
+</tr>
+<tr>
+<td style="text-align:center">$a_i^l$</td>
+<td style="text-align:center">第 $l$ 层 $i$ 单元的激活值，对第一层有 $a_i^1=x_i$</td>
+</tr>
+<tr>
+<td style="text-align:center">$W^l_{ij}$</td>
+<td style="text-align:center">连接第 $l$ 层 $j$ 单元和第 $l+1$ 层 $i$ 单元的参数</td>
+</tr>
+<tr>
+<td style="text-align:center">$b^l_i$</td>
+<td style="text-align:center">连接第 $l$ 层偏置单元和第 $l+1$ 层 $i$ 单元的参数</td>
+</tr>
+<tr>
+<td style="text-align:center">$z_i^l$</td>
+<td style="text-align:center">第 $l$ 层 $i$ 单元所有输入的加权和</td>
+</tr>
+<tr>
+<td style="text-align:center">$f()$</td>
+<td style="text-align:center">激活函数，可选 $sigmoid$ 或 $tanh$ 函数</td>
+</tr>
+<tr>
+<td style="text-align:center">$s_l$</td>
+<td style="text-align:center">第 $l$ 层的单元数目（不包含偏置单元）</td>
+</tr>
+<tr>
+<td style="text-align:center">$n_l$</td>
+<td style="text-align:center">神经网络层数</td>
+</tr>
+</tbody>
+</table>
+<p>有：</p>
+<p>$$z_i^{l+1} = b<em>i^{l} + \sum</em>{j=1}^{s<em>{l}} W</em>{ij}^{l} a_j^{l}$$</p>
+<p>$$a_i^l = f(z_i^l)$$</p>
+<h3 id="前向传播（forward-propagation）"><a href="#前向传播（forward-propagation）" class="headerlink" title="前向传播（forward propagation）"></a>前向传播（forward propagation）</h3><p>从输入层单元开始，逐层计算下层单元，直到求得输出层。可以说就是神经网络由输入预测输出的整个过程。</p>
+<h3 id="反向传播"><a href="#反向传播" class="headerlink" title="反向传播"></a>反向传播</h3><p>反向传播运用梯度下降试图寻找最优模型参数，即 $W_{ij}^l$ 与 $b_i^l$，使得代价函数最小。梯度下降开始前给参数随机赋值，用前向传播计算出各层单元。下降关键是整体代价函数 $J$ 对参数 $W$ 和 $b$ 的求导。</p>
+<p>对于单个样例 $(x,y)$，其代价函数为：<br>$$ J(W,b; x,y) = \frac{1}{2} \left| h_{W,b}(x) - y \right|^2 $$</p>
+<p>给定一个包含 $m$ 个样例的数据集，定义整体代价函数为：</p>
+<p>$$  J(W,b) = \frac{1}{m} \sum<em>{i=1}^m J(W,b;x^{(i)},y^{(i)}) + \frac{\lambda}{2} \sum (W^{(l)}</em>{ji})^2 $$</p>
+<p>第一项是对所有样例的代价求和取平均，而第二项作为规则化项，防止过拟合。因为第二项求导简单，不再赘述。对第二项只关心单个样例求导，即</p>
+<p>$$ \frac{\partial J(W,b;x,y)}{\partial W_{ij}^l}\;\; and \;\; \frac{\partial J(W,b;x,y)}{\partial b_i^l} $$</p>
+<p>首先有：</p>
+<p>$$\frac{\partial J}{\partial W_{ij}^l} = \frac{\partial J}{\partial z_i^{l+1}} \frac{\partial z<em>i^{l+1}}{\partial W</em>{ij}^l} = \frac{\partial J}{\partial z_i^{l+1}} a_j^l$$</p>
+<p>同理：</p>
+<p>$$\frac{\partial J}{\partial b_i^l} = \frac{\partial J}{\partial z_i^{l+1}} \frac{\partial z_i^{l+1}}{\partial b_i^l} = \frac{\partial J}{\partial z_i^{l+1}} $$</p>
+<p>所以，关键是求解：</p>
+<p>$$  \delta^{(l+1)}_i = \frac{\partial J}{\partial z_i^{l+1}}$$</p>
+<h4 id="当-l-n-l"><a href="#当-l-n-l" class="headerlink" title="当 $l=n_l$"></a>当 $l=n_l$</h4><p>$$  \delta^{(n_l)}_i<br>= \frac{\partial}{\partial z^{n_l}<em>i}\frac{1}{2} \left| y - h</em>{W,b}(x) \right|^2<br>= \frac{\partial}{\partial z^{n_l}<em>i}\frac{1}{2} \sum</em>{j=1}^{S_{n_l}} (y_j-f(z_j^{(n_l)}))^2  \<br>= - (y_i - f(z_i^{(n_l)})) \cdot f’(z^{(n_l)}_i) = - (y_i - a^{(n_l)}_i) \cdot f’(z^{(n_l)}_i) $$</p>
+<h4 id="当-l-lt-n-l"><a href="#当-l-lt-n-l" class="headerlink" title="当 $l&lt;n_l$"></a>当 $l&lt;n_l$</h4><p>$$\delta^{(l)}_i = \frac{\partial J}{\partial z<em>i^{l}}<br>= \sum</em>{k=1}^{s_{l+1}} \frac{\partial J}{\partial z_k^{l+1}}  \frac{\partial z_k^{l+1}}{\partial a_i^l}   \frac{\partial a_i^l}{\partial z<em>i^l} \<br>= \sum</em>{k=1}^{s_{l+1}} \delta^{(l+1)}<em>k W</em>{ki}^l  f’(z^{(l)}_i)<br>$$</p>
+<p>这里用了链式求导法则， $a_i^l$ 是 $z_i^l$ 的函数，而 $l+1$ 层的所有 $z_k^{l+1}$ 都是 $a_i^l$ 的函数且作为 $J$ 的自变量。</p>
+<p>可见求解 $\delta^{(l)}_i$ 需要用到 $l+1$ 层的 $\delta$，所以迭代过程从输出层“反向”向输入层渐进。</p>
+<h3 id="自编码器与稀疏性"><a href="#自编码器与稀疏性" class="headerlink" title="自编码器与稀疏性"></a>自编码器与稀疏性</h3><p>自编码器是一种输入作为输出进行训练的神经网络。通常会给隐藏层神经元添加限制，比如要求100维输入样本只能使用50个隐藏神经元，由于最终训练出的模型能“还原”输入，所以这50个隐藏神经元能“压缩”表示这100维的样本。<a href="http://deeplearning.stanford.edu/wiki/index.php/%E8%87%AA%E7%BC%96%E7%A0%81%E7%AE%97%E6%B3%95%E4%B8%8E%E7%A8%80%E7%96%8F%E6%80%A7" target="_blank" rel="noopener">稀疏性</a>限制也可被用于这样的目的。</p>
+<blockquote>
+<p>稀疏性可以被简单地解释如下。如果当神经元的输出接近于1的时候我们认为它被激活，而输出接近于0的时候认为它被抑制，那么使得神经元大部分的时间都是被抑制的限制则被称作稀疏性限制。</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ML/" rel="tag">#ML</a>
+          
+            <a href="/tags/机器学习技法/" rel="tag">#机器学习技法</a>
+          
+            <a href="/tags/NN/" rel="tag">#NN</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/15/ML-Preprcs-NormStd/" rel="next" title="数据预处理——中心化、归一化与标准化">
+                <i class="fa fa-chevron-left"></i> 数据预处理——中心化、归一化与标准化
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/19/ML-F-PCA/" rel="prev" title="主成分分析">
+                主成分分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Blunt" />
+          <p class="site-author-name" itemprop="name">Blunt</p>
+          <p class="site-description motion-element" itemprop="description">email：summer15y@163.com</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">72</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#符号"><span class="nav-number">2.</span> <span class="nav-text">符号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#前向传播（forward-propagation）"><span class="nav-number">3.</span> <span class="nav-text">前向传播（forward propagation）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向传播"><span class="nav-number">4.</span> <span class="nav-text">反向传播</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#当-l-n-l"><span class="nav-number">4.1.</span> <span class="nav-text">当 $l=n_l$</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#当-l-lt-n-l"><span class="nav-number">4.2.</span> <span class="nav-text">当 $l&lt;n_l$</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自编码器与稀疏性"><span class="nav-number">5.</span> <span class="nav-text">自编码器与稀疏性</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Blunt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

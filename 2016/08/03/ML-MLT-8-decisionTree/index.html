@@ -1,0 +1,648 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ML,机器学习技法,Ensemble Learning," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="此文是本人学习林轩田老师教授的机器学习技法第九课——Decision Tree——的笔记。这节课主要讲解 CART (Classification And Regression Tree) 算法，属于决策树。 参考 机器学习技法 课件  决策树的基本思想就举课上的例子好了。要处理的问题是：我回家后是否看学习视频呢？处理这个问题，首先可能想到，我是什么时候回家的呢？那么这个问题分成2种情况。如果回家">
+<meta name="keywords" content="ML,机器学习技法,Ensemble Learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习技法第九课——Decision Tree">
+<meta property="og:url" content="http://yoursite.com/2016/08/03/ML-MLT-8-decisionTree/index.html">
+<meta property="og:site_name" content="HotSummer">
+<meta property="og:description" content="此文是本人学习林轩田老师教授的机器学习技法第九课——Decision Tree——的笔记。这节课主要讲解 CART (Classification And Regression Tree) 算法，属于决策树。 参考 机器学习技法 课件  决策树的基本思想就举课上的例子好了。要处理的问题是：我回家后是否看学习视频呢？处理这个问题，首先可能想到，我是什么时候回家的呢？那么这个问题分成2种情况。如果回家">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2016-10-01T14:47:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习技法第九课——Decision Tree">
+<meta name="twitter:description" content="此文是本人学习林轩田老师教授的机器学习技法第九课——Decision Tree——的笔记。这节课主要讲解 CART (Classification And Regression Tree) 算法，属于决策树。 参考 机器学习技法 课件  决策树的基本思想就举课上的例子好了。要处理的问题是：我回家后是否看学习视频呢？处理这个问题，首先可能想到，我是什么时候回家的呢？那么这个问题分成2种情况。如果回家">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+
+  <title> 机器学习技法第九课——Decision Tree | HotSummer </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HotSummer</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                机器学习技法第九课——Decision Tree
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-03T08:40:56+08:00" content="2016-08-03">
+              2016-08-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>此文是本人学习<a href="http://www.csie.ntu.edu.tw/~htlin/" target="_blank" rel="noopener">林轩田老师</a>教授的机器学习技法第九课——Decision Tree——的笔记。这节课主要讲解 <strong>CART (Classification And Regression Tree)</strong> 算法，属于决策树。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://www.csie.ntu.edu.tw/~htlin/mooc/" target="_blank" rel="noopener">机器学习技法</a></li>
+<li><a href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/209_handout.pdf" target="_blank" rel="noopener">课件</a></li>
+</ul>
+<h3 id="决策树的基本思想"><a href="#决策树的基本思想" class="headerlink" title="决策树的基本思想"></a>决策树的基本思想</h3><p>就举课上的例子好了。要处理的问题是：我回家后是否看学习视频呢？处理这个问题，首先可能想到，我是什么时候回家的呢？那么这个问题分成2种情况。如果回家很早，那么，我是不是有什么约会呢？有约会就不看了，没约会就看。如果回家晚，那么，学习的截止时间是不是快到了呢？快截止了就勉强看下吧，否则就算了。</p>
+<p>决策树模型与上述处理问题的过程类似。决策树顾名思义，是一棵树。树的节点是决策器，决策器输入问题，稍做判断，又将问题交给某个合适的下层决策器（下层节点），最终最下层的决策器输出这个问题的处理结果。所以，在处理问题时，问题从决策树的根节点进入，经过一层层的决策，最终输出决策结果。</p>
+<p><strong>CART</strong> 是决策树中的一种，它是一棵二叉树，可处理分类或回归问题。</p>
+<h3 id="CART-训练步骤"><a href="#CART-训练步骤" class="headerlink" title="CART 训练步骤"></a>CART 训练步骤</h3><p>CART 模型训练主要分为 2 步，一、生成完全树，二、剪枝。</p>
+<p><strong>完全树</strong> 是能够将所有训练数据都完全无误地预测的决策树，即在训练集上的误差为 0。实际上，训练数据往往有误差，而完全树做到对训练数据判断的无误差，导致在实际预测时误差较大，有很大的复杂度方面的代价。所以，需要做正则化方面的工作，CART 采用的就是 <strong>剪枝</strong> 。顾名思义，剪枝会剪去完全树的部分树枝，减小模型的复杂度。</p>
+<h4 id="生成完全树"><a href="#生成完全树" class="headerlink" title="生成完全树"></a>生成完全树</h4><p>完全树的训练可用递归方式。完全树的节点是“决策器”，实际上是分类器（或回归算法）。决策器将数据大致分类（或用回归预测做大致分类），然后分别交给下层的决策器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">function trainCART：</span><br><span class="line">  - 输入：训练数据集 D</span><br><span class="line">  - 输出：CART 二叉树 Tree</span><br><span class="line">学习决策器 decisionNode，将 D 分为 Dl, Dr;</span><br><span class="line">if Dl 可以再分：</span><br><span class="line">  call trainCART 处理 Dl 得到 treeL;</span><br><span class="line">同上处理 Dr 得到 treeR;</span><br><span class="line">decisionNode 作为根节点，合并 treeL, treeR, 得到二叉树 tree;</span><br><span class="line">return tree;</span><br></pre></td></tr></table></figure>
+<h5 id="递归训练终止条件"><a href="#递归训练终止条件" class="headerlink" title="递归训练终止条件"></a>递归训练终止条件</h5><p>整个递归的终止条件是“数据是否可再分”，在两种条件下不再分。如果训练数据都相同，即 $\mathbf{x}_n$ 都相同，无法分割；如果训练数据分类都相同，即 $y_n$ 都相同，不用分割。</p>
+<h5 id="决策器选择指标与不纯度"><a href="#决策器选择指标与不纯度" class="headerlink" title="决策器选择指标与不纯度"></a>决策器选择指标与不纯度</h5><p>学习决策器时，CART 的每个决策器被称为 <strong>决策树桩（decision stump）</strong> ，每个决策树桩对输入数据进行切割。对于多个候选决策器，CART 的选择标准为：</p>
+<p>$$  \underset{decision\; stumps\; h<em>i(\mathbf{x})}{argmin} \frac{|D</em>{i,l}|}{|D|} \cdot impurity(D<em>{i,l}) + \frac{|D</em>{i,r}|}{|D|} \cdot impurity(D_{i,r})  $$</p>
+<p>其中，$h<em>i(\mathbf{x})$ 指第 $i$ 个决策树桩模型， $D$ 指训练数据， $D</em>{i,l},\; D_{i,r}$ 分别是 $h<em>i(\mathbf{x})$ 将 $D$ 划分的数据，  $\frac{|D</em>{i,l}|}{|D|}$ 计算了 $D_{i,l}$ 数据量在 $D$ 中的占比， impurity 是计算划分数据的 <strong>不纯度</strong> 函数。一个决策树桩划分的数据的不纯度越小越好。</p>
+<p>不纯度指数据中类别的不相同的程度。比如，”被判定为鸭群，有 7 只鸭和 3 只鸡”比“被判定为鸡群，有 9 只鸡和 1 只鸭”更“不纯”，前者不纯度更高。</p>
+<p>CART 对于回归与分类的不纯度公式稍有区别。</p>
+<h6 id="回归不纯度公式"><a href="#回归不纯度公式" class="headerlink" title="回归不纯度公式"></a>回归不纯度公式</h6><p>$$ impurity(D) = \frac{1}{N} \sum_{n=1}^N (y_n - \overline{y})^2 $$</p>
+<h6 id="分类不纯度——Gini-指数"><a href="#分类不纯度——Gini-指数" class="headerlink" title="分类不纯度——Gini 指数"></a>分类不纯度——Gini 指数</h6><p>$$ impurity(D) = 1-\sum<em>{k=1}^K(\frac{\sum</em>{n=1}^N [y_n=k]}{N})^2 $$</p>
+<p>其中， $K$ 是分类的种数，对于二分类， $K=2$； $k$ 表示分类编号； $[y_n=k]$ 是一个布尔判断，如果第 $n$ 个数据是第 $k$ 类，得 1，否则为 0。</p>
+<h4 id="剪枝（Pruning）"><a href="#剪枝（Pruning）" class="headerlink" title="剪枝（Pruning）"></a>剪枝（Pruning）</h4><p>CART 采用 <strong>后剪枝(Post-Pruning)</strong>，即在已生成的完全树上进行剪枝。大致流程：</p>
+<ul>
+<li>分别剪去一个叶子节点，得到多棵决策树</li>
+<li>计算每棵决策树剪枝“代价”，保留代价最小的决策树</li>
+<li>重复以上流程，直至剪枝代价高于不剪枝的代价</li>
+</ul>
+<p>代价公式可表示为：</p>
+<p>$$ cost(G) = E_{in}(G) + \lambda\cdot NumberOfLeaves(G) $$</p>
+<p>其中， $G$ 表示一个决策树模型， $NumberOfLeaves(G)$ 即决策树的树叶数目，树叶数目越少，模型越复杂，（回归）越容易过拟合， $\lambda$ 是指定的正则化参数。</p>
+<h3 id="决策树桩（decision-stump）"><a href="#决策树桩（decision-stump）" class="headerlink" title="决策树桩（decision stump）"></a>决策树桩（decision stump）</h3><p>如前撰述，决策树桩是深度为一的决策树，典型的弱分类器，也可用于回归，常被用作集成学习中的基础模型。它可以将输入数据按照某种标准分为两部分。</p>
+<p>决策树桩需要选择一个恰当的特征维度 $i$（ 输入向量 $\mathbf{x}$ 的一个维度）、 阈值 $\theta$ 与方向 $s={-1,1}$ 进行切割。它的分类器可表示为：</p>
+<p>$$h_{s,i,\theta}(\mathbf{x}) = s \cdot sign(x_i - \theta)$$</p>
+<p>对于训练数据 $D$ ，如何训练出一个最佳的决策树桩？根据决策树的训练方法，最原始的方法应该是尝试每一个可选的 $i, \theta, s$ ，计算不纯度，选择不纯度最低的一组参数。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ML/" rel="tag">#ML</a>
+          
+            <a href="/tags/机器学习技法/" rel="tag">#机器学习技法</a>
+          
+            <a href="/tags/Ensemble-Learning/" rel="tag">#Ensemble Learning</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/30/Math-Calculus-derivationApplication/" rel="next" title="微积分——导数应用">
+                <i class="fa fa-chevron-left"></i> 微积分——导数应用
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/04/Tools-MathJax/" rel="prev" title="MathJax Cheat Sheet">
+                MathJax Cheat Sheet <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Blunt" />
+          <p class="site-author-name" itemprop="name">Blunt</p>
+          <p class="site-description motion-element" itemprop="description">email：summer15y@163.com</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">72</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#决策树的基本思想"><span class="nav-number">2.</span> <span class="nav-text">决策树的基本思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CART-训练步骤"><span class="nav-number">3.</span> <span class="nav-text">CART 训练步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#生成完全树"><span class="nav-number">3.1.</span> <span class="nav-text">生成完全树</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#递归训练终止条件"><span class="nav-number">3.1.1.</span> <span class="nav-text">递归训练终止条件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#决策器选择指标与不纯度"><span class="nav-number">3.1.2.</span> <span class="nav-text">决策器选择指标与不纯度</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#回归不纯度公式"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">回归不纯度公式</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#分类不纯度——Gini-指数"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">分类不纯度——Gini 指数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#剪枝（Pruning）"><span class="nav-number">3.2.</span> <span class="nav-text">剪枝（Pruning）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#决策树桩（decision-stump）"><span class="nav-number">4.</span> <span class="nav-text">决策树桩（decision stump）</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Blunt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

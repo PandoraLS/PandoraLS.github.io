@@ -1,0 +1,632 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Cheat Sheet,Tools,Git," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="gitignore项目下 .gitignore 文件与项目下 .git/info/exclude 文件都可以使 git 在文件或目录未添加进记录前被忽略。前者应该被团队共享，而后者应该作为个人的配置。因为后者在 .git 目录下，其改变被 git 忽略，不会影响其他人。  .gitignore 模板 使用 .git/info/exclude 作为个人配置，.gitignore 作为团队配置 匹配目">
+<meta name="keywords" content="Cheat Sheet,Tools,Git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="My Git Cheat Sheet">
+<meta property="og:url" content="http://yoursite.com/2016/05/22/Tools-Git/index.html">
+<meta property="og:site_name" content="HotSummer">
+<meta property="og:description" content="gitignore项目下 .gitignore 文件与项目下 .git/info/exclude 文件都可以使 git 在文件或目录未添加进记录前被忽略。前者应该被团队共享，而后者应该作为个人的配置。因为后者在 .git 目录下，其改变被 git 忽略，不会影响其他人。  .gitignore 模板 使用 .git/info/exclude 作为个人配置，.gitignore 作为团队配置 匹配目">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-05-18T04:02:22.911Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="My Git Cheat Sheet">
+<meta name="twitter:description" content="gitignore项目下 .gitignore 文件与项目下 .git/info/exclude 文件都可以使 git 在文件或目录未添加进记录前被忽略。前者应该被团队共享，而后者应该作为个人的配置。因为后者在 .git 目录下，其改变被 git 忽略，不会影响其他人。  .gitignore 模板 使用 .git/info/exclude 作为个人配置，.gitignore 作为团队配置 匹配目">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+
+  <title> My Git Cheat Sheet | HotSummer </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HotSummer</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                My Git Cheat Sheet
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-05-22T20:22:26+08:00" content="2016-05-22">
+              2016-05-22
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Tools/" itemprop="url" rel="index">
+                    <span itemprop="name">Tools</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="gitignore"><a href="#gitignore" class="headerlink" title="gitignore"></a>gitignore</h4><p>项目下 .gitignore 文件与项目下 .git/info/exclude 文件都可以使 git 在文件或目录未添加进记录前被忽略。前者应该被团队共享，而后者应该作为个人的配置。因为后者在 .git 目录下，其改变被 git 忽略，不会影响其他人。</p>
+<ul>
+<li><a href="https://github.com/github/gitignore" target="_blank" rel="noopener">.gitignore 模板</a></li>
+<li>使用 .git/info/exclude 作为个人配置，.gitignore 作为团队配置</li>
+<li>匹配目录加 “/“：“dir_name/”</li>
+<li>匹配前加上惊叹号 “!”，表示不忽略</li>
+</ul>
+<h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global -l # 查看全局配置</span><br><span class="line">git diff HEAD -- filename # 比较</span><br></pre></td></tr></table></figure>
+<h4 id="撤销操作"><a href="#撤销操作" class="headerlink" title="撤销操作"></a>撤销操作</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">git reset HEAD    # 撤销上次 add 操作</span><br><span class="line"></span><br><span class="line"># 提交级别</span><br><span class="line"># 缓存重置</span><br><span class="line">git reset --hard HEAD </span><br><span class="line"># 工作区和缓存都重置</span><br><span class="line">git reset --hard HEAD </span><br><span class="line"></span><br><span class="line"># 文件级别</span><br><span class="line"># 放弃工作区的更改</span><br><span class="line">git checkout HEAD foo.py </span><br><span class="line"></span><br><span class="line"># Unstage文件，撤销add</span><br><span class="line">git reset HEAD foo.py</span><br></pre></td></tr></table></figure>
+<p>更详细的教程<a href="https://github.com/geeeeeeeeek/git-recipes/wiki/5.2-%E4%BB%A3%E7%A0%81%E5%9B%9E%E6%BB%9A%EF%BC%9AReset%E3%80%81Checkout%E3%80%81Revert-%E7%9A%84%E9%80%89%E6%8B%A9" target="_blank" rel="noopener">代码回滚：Reset、Checkout、Revert-的选择</a></p>
+<h4 id="diff-比较"><a href="#diff-比较" class="headerlink" title="diff 比较"></a>diff 比较</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git diff  # 比较工作区与缓存区</span><br><span class="line">git diff --cached   # 比较缓存区与仓库（HEAD）</span><br><span class="line">git diff HEAD   # 比较工作区与仓库（HEAD）</span><br></pre></td></tr></table></figure>
+<h4 id="换行符差异"><a href="#换行符差异" class="headerlink" title="换行符差异"></a>换行符差异</h4><p>Unix/MacOS使用LF换行符，而Windows用CRLF。在Windows下，Git在检出时默认将LF转换为CRLF，在commit时自动将CRLF转换为LF，但可能造成混乱，例如直接从Unix拷贝到Windows的源文件是LF的，会被视为有变更。为避免这个问题，首先设置IDE换行符为LF，并关闭Git这个功能：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#提交检出均不转换换行符</span><br><span class="line">git config --global core.autocrlf false</span><br><span class="line">#拒绝提交包含混合换行符的文件</span><br><span class="line">git config --global core.safecrlf true</span><br></pre></td></tr></table></figure></p>
+<h4 id="生成ssh-key"><a href="#生成ssh-key" class="headerlink" title="生成ssh key"></a>生成ssh key</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ubuntu下打开shell，Windows下打开Git bash</span></span><br><span class="line">ssh-keygen -t rsa</span><br></pre></td></tr></table></figure>
+<h3 id="idea将已有项目添加到git"><a href="#idea将已有项目添加到git" class="headerlink" title="idea将已有项目添加到git"></a>idea将已有项目添加到git</h3><p>转载：IDEA 将已有项目添加到git，<a href="https://www.cnblogs.com/rongguang/p/5516300.html" target="_blank" rel="noopener">https://www.cnblogs.com/rongguang/p/5516300.html</a></p>
+<p>首先，我们解决的情况是，已经有了一个正在开发的项目，现在我们要把他分享到git@osc上面去。</p>
+<h4 id="在git-OSC上创建仓库"><a href="#在git-OSC上创建仓库" class="headerlink" title="在git@OSC上创建仓库"></a>在git@OSC上创建仓库</h4><p>先在Git@OSC上创建仓库，拿到Git@OSC仓库的HTTP连接<code>http://git.oschina.net/***/***.git</code></p>
+<h4 id="把项目用git管理"><a href="#把项目用git管理" class="headerlink" title="把项目用git管理"></a>把项目用git管理</h4><p>如果我们的本地项目是非git项目，那我们要先把它变成git项目：在intellij中 VCS——Import into Version Control——Create Git Repository——选择你的本地项目。</p>
+<h4 id="执行git-pull与push"><a href="#执行git-pull与push" class="headerlink" title="执行git pull与push"></a>执行git pull与push</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 给项目设置远程远程仓库 #  </span><br><span class="line">git remote add origin http://git.oschina.net/***/***.git  </span><br><span class="line"># 把本地master指向origin/master</span><br><span class="line">git branch --set-upstream-to=origin/master master</span><br><span class="line"># 抓取远程仓库数据，并自动合并远程分支 #  </span><br><span class="line">git pull origin master   </span><br><span class="line"># 更新本地数据到Git@OSC #  </span><br><span class="line">git push origin master</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Cheat-Sheet/" rel="tag">#Cheat Sheet</a>
+          
+            <a href="/tags/Tools/" rel="tag">#Tools</a>
+          
+            <a href="/tags/Git/" rel="tag">#Git</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/21/Math-LinAlg-Matrix/" rel="next" title="矩阵相关">
+                <i class="fa fa-chevron-left"></i> 矩阵相关
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/23/Math-LinAlg-hyperplane/" rel="prev" title="超平面">
+                超平面 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Blunt" />
+          <p class="site-author-name" itemprop="name">Blunt</p>
+          <p class="site-description motion-element" itemprop="description">email：summer15y@163.com</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">72</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#gitignore"><span class="nav-number">1.</span> <span class="nav-text">gitignore</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用命令"><span class="nav-number">2.</span> <span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#撤销操作"><span class="nav-number">3.</span> <span class="nav-text">撤销操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#diff-比较"><span class="nav-number">4.</span> <span class="nav-text">diff 比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#换行符差异"><span class="nav-number">5.</span> <span class="nav-text">换行符差异</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#生成ssh-key"><span class="nav-number">6.</span> <span class="nav-text">生成ssh key</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#idea将已有项目添加到git"><span class="nav-number"></span> <span class="nav-text">idea将已有项目添加到git</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#在git-OSC上创建仓库"><span class="nav-number">1.</span> <span class="nav-text">在git@OSC上创建仓库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#把项目用git管理"><span class="nav-number">2.</span> <span class="nav-text">把项目用git管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#执行git-pull与push"><span class="nav-number">3.</span> <span class="nav-text">执行git pull与push</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Blunt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

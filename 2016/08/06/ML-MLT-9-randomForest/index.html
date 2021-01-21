@@ -1,0 +1,634 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ML,机器学习技法,Ensemble Learning," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="此文是本人学习林轩田老师教授的机器学习技法第十——Decision Tree——的笔记。 Random Forest 模型概括讲，就是以 Decision Tree 为基础模型，这里选择未经剪枝的完全树，用 Bagging 进行集合训练。完全决策树在训练集上的零误差，对样本选择十分敏感，有较大的 varaince，但有着训练高效等优点。而 Bagging 能够降低模型预测的 varaince 误差">
+<meta name="keywords" content="ML,机器学习技法,Ensemble Learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器学习技法第十课——Random Forest">
+<meta property="og:url" content="http://yoursite.com/2016/08/06/ML-MLT-9-randomForest/index.html">
+<meta property="og:site_name" content="HotSummer">
+<meta property="og:description" content="此文是本人学习林轩田老师教授的机器学习技法第十——Decision Tree——的笔记。 Random Forest 模型概括讲，就是以 Decision Tree 为基础模型，这里选择未经剪枝的完全树，用 Bagging 进行集合训练。完全决策树在训练集上的零误差，对样本选择十分敏感，有较大的 varaince，但有着训练高效等优点。而 Bagging 能够降低模型预测的 varaince 误差">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2016-10-01T14:47:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="机器学习技法第十课——Random Forest">
+<meta name="twitter:description" content="此文是本人学习林轩田老师教授的机器学习技法第十——Decision Tree——的笔记。 Random Forest 模型概括讲，就是以 Decision Tree 为基础模型，这里选择未经剪枝的完全树，用 Bagging 进行集合训练。完全决策树在训练集上的零误差，对样本选择十分敏感，有较大的 varaince，但有着训练高效等优点。而 Bagging 能够降低模型预测的 varaince 误差">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+
+  <title> 机器学习技法第十课——Random Forest | HotSummer </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">HotSummer</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                机器学习技法第十课——Random Forest
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-06T16:26:43+08:00" content="2016-08-06">
+              2016-08-06
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/ML/" itemprop="url" rel="index">
+                    <span itemprop="name">ML</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>此文是本人学习<a href="http://www.csie.ntu.edu.tw/~htlin/" target="_blank" rel="noopener">林轩田老师</a>教授的机器学习技法第十——Decision Tree——的笔记。</p>
+<p><strong>Random Forest</strong> 模型概括讲，就是以 <a href="/2016/08/03/ML-MLT-8-decisionTree/" title="Decision Tree">Decision Tree</a> 为基础模型，这里选择未经剪枝的完全树，用 <a href="/2016/07/23/ML-MLT-6-blendingBagging/" title="Bagging">Bagging</a> 进行集合训练。完全决策树在训练集上的零误差，对样本选择十分敏感，有较大的 varaince，但有着训练高效等优点。而 Bagging 能够降低模型预测的 varaince 误差，特别适用于对样本敏感的波动比较大的模型。所以，结合两者应该可以取得好效果。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://www.csie.ntu.edu.tw/~htlin/mooc/" target="_blank" rel="noopener">机器学习技法</a></li>
+<li><a href="https://www.csie.ntu.edu.tw/~htlin/mooc/doc/210_handout.pdf" target="_blank" rel="noopener">课件</a></li>
+<li><a href="/2016/08/03/ML-MLT-8-decisionTree/" title="Decision Tree">Decision Tree</a></li>
+<li><a href="/2016/07/23/ML-MLT-6-blendingBagging/" title="Bagging">Bagging</a></li>
+<li><a href="http://www.plob.org/2012/12/19/3176.html" target="_blank" rel="noopener">置换检验</a></li>
+</ul>
+<h3 id="增强随机性"><a href="#增强随机性" class="headerlink" title="增强随机性"></a>增强随机性</h3><p>在 Random Forest 中，为了进一步降低算法 variance 误差，不仅抽取样本时做到随机抽取，还在选择特征时保证一定的随机性。普遍使用方式是 <em>随机选取子空间</em>。</p>
+<h4 id="随机选取子空间（random-subspace）"><a href="#随机选取子空间（random-subspace）" class="headerlink" title="随机选取子空间（random subspace）"></a>随机选取子空间（random subspace）</h4><p>在训练 Decision Tree 的每一个节点时，需要按照某种准则（如基尼值）选取一个特征用于数据划分。未经处理的特征选择数目是所有特征的数目 $M$， 为了增大随机性，随机抽取其中的 $m$ （往往 $M,m$ 差距比较大）个特征供选择。一项数据 $(\mathbf{x}, y)$， 将 $\mathbf{x}$ 视作一个空间向量，每个特征对应一个维度，所以，这个过程可以理解成随机抽取一个子空间用做训练。</p>
+<h4 id="随机结合子空间（random-combination）"><a href="#随机结合子空间（random-combination）" class="headerlink" title="随机结合子空间（random combination）"></a>随机结合子空间（random combination）</h4><p>与<em>随机选取子空间</em>不同，随机结合子空间将数据向量 $\mathbf{x}$ 投影到另一个空间成为 $\mathbf{x’}$。 $\mathbf{x’}$ 的每一维都是从原 $\mathbf{x}$ 的 $M$ 维中随机选择 $m$ 维结合（相加）而得。</p>
+<h3 id="Out-Of-Bag-验证"><a href="#Out-Of-Bag-验证" class="headerlink" title="Out Of Bag 验证"></a>Out Of Bag 验证</h3><p>Bagging 采用 Bootstrapping 的方式取样，有些样本没有被抽到不能用作训练数据，称其为 Out Of Bag（简称 OOB） 数据，但它们也可以被利用起来，作为验证使用。</p>
+<p>具体做法是，在为每个 Decision Tree 抽取训练数据时就标记那些未被抽取的 OOB 数据，在整个 Random Forest 训练结束后用 OOB 做验证。在用某项 OOB 数据做验证时，该数据可能被一些 Decision Tree 用作训练数据，所以必须排除这些 Decision Tree。</p>
+<h3 id="特征选择——置换重要性"><a href="#特征选择——置换重要性" class="headerlink" title="特征选择——置换重要性"></a>特征选择——置换重要性</h3><p><strong>特征选择</strong> 指从所有特征中选取对结果有影响（有用）的特征，剔除无关特征。Random Forest 能很容易实现这个功能。</p>
+<p>如果一个特征 $x_i$ 对结果 $y$ 无影响，那么 $x_i$ 与 $y$ 是否正确对应也就无关紧要。基于这个思想，研究者提出一个通过置换特征计算其重要程度的方法：</p>
+<p>$$ importance(i) = E<em>{oob}(G) - E</em>{oob}^{(p)}(G) $$</p>
+<p>其中，G 指已经训练完成的 Random Forest 模型， $E<em>{oob}$ 指 OOB 验证误差，未经任何处理，而 $E</em>{oob}^{(p)}$ 指在进行 OOB 验证前，所有 OOB 数据的第 $i$ 个特征（第 $i$ 维数值 $x_i$）相互间进行随机置换（互换）。</p>
+<p>这个思想类似 permutation test <a href="http://www.plob.org/2012/12/19/3176.html" target="_blank" rel="noopener">置换检验</a>。</p>
+<h3 id="树越多越好？"><a href="#树越多越好？" class="headerlink" title="树越多越好？"></a>树越多越好？</h3><p>老师指出，理论上讲，树越多，Random Forest 的越强，建议在预测效果不好时，适当增加树的个数。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ML/" rel="tag">#ML</a>
+          
+            <a href="/tags/机器学习技法/" rel="tag">#机器学习技法</a>
+          
+            <a href="/tags/Ensemble-Learning/" rel="tag">#Ensemble Learning</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/04/Tools-MathJax/" rel="next" title="MathJax Cheat Sheet">
+                <i class="fa fa-chevron-left"></i> MathJax Cheat Sheet
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/12/ML-validation/" rel="prev" title="模型验证">
+                模型验证 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Blunt" />
+          <p class="site-author-name" itemprop="name">Blunt</p>
+          <p class="site-description motion-element" itemprop="description">email：summer15y@163.com</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">72</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#增强随机性"><span class="nav-number">2.</span> <span class="nav-text">增强随机性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#随机选取子空间（random-subspace）"><span class="nav-number">2.1.</span> <span class="nav-text">随机选取子空间（random subspace）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#随机结合子空间（random-combination）"><span class="nav-number">2.2.</span> <span class="nav-text">随机结合子空间（random combination）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Out-Of-Bag-验证"><span class="nav-number">3.</span> <span class="nav-text">Out Of Bag 验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特征选择——置换重要性"><span class="nav-number">4.</span> <span class="nav-text">特征选择——置换重要性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#树越多越好？"><span class="nav-number">5.</span> <span class="nav-text">树越多越好？</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Blunt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
